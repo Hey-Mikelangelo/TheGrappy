@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using Cinemachine;
+using UnityEngine;
 
 [RequireComponent (typeof (AimPhase))]
 [RequireComponent (typeof (GrapPhase))]
@@ -11,27 +11,27 @@ public class PlayerManager : MonoBehaviour {
     private AimPhase aimPhase;
 
     [Header ("Aim phase variables")]
+    public float speed = 1;
     public float grapLength;
     public float circleCastRadius;
     public LayerMask grapPointsMask;
-    public float speed = 1;
 
     [Header ("Grap phase variables")]
     public float rotToAlignSpeed = 0.5f;
-    public float pullSpeed = 1;
     public float minOrbitRadius = 1f;
+    public float pullSpeed = 1;
     public float pullDelay = 0.05f;
-    [SerializeField] private Phase _phase;
-    [SerializeField] private Vector2 _aimDelta;
-    [SerializeField] private bool _onActionEnd;
+    private Phase _phase;
+    private Vector2 _aimDelta;
+    private bool _onActionEnd;
     private Transform _grapPoint;
     public enum Phase {
         aim,
         grap
     }
     private void Awake () {
-        aimPhase = GetComponent<AimPhase>();
-        grapPhase = GetComponent<GrapPhase>();
+        aimPhase = GetComponent<AimPhase> ();
+        grapPhase = GetComponent<GrapPhase> ();
     }
     private void OnEnable () {
         linker.inputProxy.aimEvent += onAim;
@@ -46,7 +46,7 @@ public class PlayerManager : MonoBehaviour {
     }
     void Start () {
         aimPhase.Setup (grapLength, circleCastRadius, grapPointsMask, speed);
-        grapPhase.Setup(speed, rotToAlignSpeed, pullSpeed, minOrbitRadius, pullDelay);
+        grapPhase.Setup (speed, rotToAlignSpeed, pullSpeed, minOrbitRadius, pullDelay);
         StartAimPhase ();
     }
     void Update () {
@@ -55,7 +55,7 @@ public class PlayerManager : MonoBehaviour {
                 _grapPoint = aimPhase.Run (_aimDelta, new Vector2 (0, 0));
                 break;
             case Phase.grap:
-                grapPhase.Run();
+                grapPhase.Run ();
                 break;
         }
 
@@ -65,14 +65,14 @@ public class PlayerManager : MonoBehaviour {
 
     }
     public void StartAimPhase () {
-        grapPhase.End();
+        grapPhase.End ();
         aimPhase.Switch ();
         _phase = Phase.aim;
 
     }
     public void StartGrapPhase () {
         aimPhase.End ();
-        grapPhase.Switch(_grapPoint.position);
+        grapPhase.Switch (_grapPoint.position);
         _phase = Phase.grap;
     }
     Vector2 zero = new Vector2 (0, 0);
@@ -82,7 +82,7 @@ public class PlayerManager : MonoBehaviour {
     }
     void onActionStart () {
         if (_phase == Phase.aim) {
-            if(_grapPoint == null){
+            if (_grapPoint == null) {
                 return;
             }
             StartGrapPhase ();
@@ -91,6 +91,6 @@ public class PlayerManager : MonoBehaviour {
         }
     }
     void onActionEnd () {
-        grapPhase.StopPull();
+        grapPhase.StopPull ();
     }
 }

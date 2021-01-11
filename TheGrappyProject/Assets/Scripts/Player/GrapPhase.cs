@@ -13,9 +13,9 @@ public class GrapPhase : MonoBehaviour {
    private float _pullDelay;
 
    private bool _attatched;
-   private float _orbitRadius, _distToGrap, _rotAngle;
+   private float _orbitRadius, _distToGrap, _rotAngle, _rotProgress;
    private bool _doPull, _rotateClockwise;
-   private Quaternion _newRot;
+   private Quaternion _newRot, _prevRot;
    private Vector3 _vectorToGrap;
    private LineRenderer _lineRenderer;
    private Transform _prevParent;
@@ -91,11 +91,14 @@ public class GrapPhase : MonoBehaviour {
          }
       }
    }
-
+   void SmoothRotation(){
+      transform.localRotation = Quaternion.Slerp(_prevRot, _newRot, _rotProgress);
+      _rotProgress += 1/_rotToAlignSpeed * Time.deltaTime;
+   }
    void AttatchedMovement () {
 
-      if (Quaternion.Angle (transform.localRotation, _newRot) > 0.2f) {
-         transform.localRotation = Quaternion.Lerp (transform.localRotation, _newRot, _rotToAlignSpeed);
+      if (Quaternion.Angle (transform.localRotation, _newRot) > 0.1f) {
+         SmoothRotation();
       }
       float speed = _rotateClockwise ? -_speed : _speed;
       grapPoint.Rotate (transform.forward, (speed / _orbitRadius) * Time.deltaTime * Mathf.Rad2Deg, Space.World);
@@ -112,8 +115,9 @@ public class GrapPhase : MonoBehaviour {
    }
    void SetRotation () {
       float rotAngle = _rotateClockwise ? _rotAngle + 180 : _rotAngle;
-      //Debug.Log(_rotAngle);
+      _prevRot = transform.rotation;
       _newRot = Quaternion.Euler (0, 0, rotAngle);
+      _rotProgress = 0;
    }
    void AttatchToGrap () {
       transform.parent = grapPoint;
@@ -122,9 +126,6 @@ public class GrapPhase : MonoBehaviour {
       _vectorToGrap = transform.position - grapPoint.position;
       float angle = Mathf.Atan2 (_vectorToGrap.y, _vectorToGrap.x) * Mathf.Rad2Deg;
       _rotAngle = angle - grapPoint.rotation.eulerAngles.z;
-      //Debug.Log("angle:" + angle);
-      //Debug.Log("current angle: " + transform.rotation.eulerAngles.z);
-
    }
    void SetRotDirection () {
 
