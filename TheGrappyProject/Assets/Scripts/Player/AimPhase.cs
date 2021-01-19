@@ -1,7 +1,6 @@
 using Unity.Mathematics;
 using UnityEngine;
 public class AimPhase : MonoBehaviour {
-
    public Transform aimArrowHolder;
    public Transform circleCast;
    public LineRenderer lineRenderer;
@@ -15,7 +14,8 @@ public class AimPhase : MonoBehaviour {
    private LayerMask _grapPointsMask;
    private float _speed;
    private RaycastHit2D[] hit = new RaycastHit2D[1];
-   private Transform _grapPoint;
+   private Transform _grapTransform;
+    private Vector3 _grapPoint;
 
    //should be called once to setup variables 
    public void Setup (float grapLength, float circleCastRadius, LayerMask grapPointsMask, float speed) {
@@ -31,7 +31,7 @@ public class AimPhase : MonoBehaviour {
          Debug.LogError ("AimArrowHolder on AimPhase Script has no attatched SpriteRenderer on child");
       } else
          aimArrowHolder.GetChild (0).GetComponent<SpriteRenderer> ().enabled = true;
-      if (_grapPoint != null)
+      if (_grapTransform != null)
          aimPoint.GetComponent<SpriteRenderer> ().enabled = true;
       if (circleCast != null && circleCastVisible)
          circleCast.GetComponent<SpriteRenderer> ().enabled = true;
@@ -71,7 +71,7 @@ public class AimPhase : MonoBehaviour {
 
       aimArrowHolder.rotation = Quaternion.Euler (0, 0, angleToHit - 90);
    }
-   public Transform Run (Vector2 aimDelta, Vector2 grapPos) {
+   public Vector3 Run (Vector2 aimDelta, Vector2 grapPos) {
       float playerAngle = Mathf.Atan2 (transform.right.y, transform.right.x) * Mathf.Rad2Deg;
       float deltaAngle = Mathf.Atan2 (aimDelta.y, aimDelta.x) * Mathf.Rad2Deg;
       float angle = deltaAngle + playerAngle;
@@ -83,22 +83,23 @@ public class AimPhase : MonoBehaviour {
 
       //change grap posiotion only if found new target
       if (hitCount != 0) {
-         _grapPoint = hit[0].transform;
+         _grapPoint = hit[0].point;
+         _grapTransform = hit[0].transform;
          aimPoint.GetComponent<SpriteRenderer> ().enabled = true;
 
       }
 
       transform.position += transform.up * _speed * Time.deltaTime;
       DrawAim (dir);
-      if (_grapPoint == null) {
-         return null;
+      if (_grapTransform == null) {
+         return Vector3.zero;
       }
-      SetGrapPoint (_grapPoint);
-      return _grapPoint;
+      SetAimPoint (_grapPoint);
+        return _grapPoint;
    }
 
-   private void SetGrapPoint (Transform point) {
-      aimPoint.position = point.position;
+   private void SetAimPoint (Vector3 point) {
+      aimPoint.position = point;
    }
 
 }

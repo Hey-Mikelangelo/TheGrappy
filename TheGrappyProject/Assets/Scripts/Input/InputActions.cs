@@ -33,6 +33,14 @@ public class @InputActions : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""Ability"",
+                    ""type"": ""Button"",
+                    ""id"": ""42903ceb-c182-4e48-b09c-58639f5bb8d5"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -178,6 +186,17 @@ public class @InputActions : IInputActionCollection, IDisposable
                     ""action"": ""Action"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a6069f28-6a56-423e-b53a-f451756deecd"",
+                    ""path"": ""<Keyboard>/z"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Ability"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -188,6 +207,7 @@ public class @InputActions : IInputActionCollection, IDisposable
         m_BaseGameplay = asset.FindActionMap("BaseGameplay", throwIfNotFound: true);
         m_BaseGameplay_Aim = m_BaseGameplay.FindAction("Aim", throwIfNotFound: true);
         m_BaseGameplay_Action = m_BaseGameplay.FindAction("Action", throwIfNotFound: true);
+        m_BaseGameplay_Ability = m_BaseGameplay.FindAction("Ability", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -239,12 +259,14 @@ public class @InputActions : IInputActionCollection, IDisposable
     private IBaseGameplayActions m_BaseGameplayActionsCallbackInterface;
     private readonly InputAction m_BaseGameplay_Aim;
     private readonly InputAction m_BaseGameplay_Action;
+    private readonly InputAction m_BaseGameplay_Ability;
     public struct BaseGameplayActions
     {
         private @InputActions m_Wrapper;
         public BaseGameplayActions(@InputActions wrapper) { m_Wrapper = wrapper; }
         public InputAction @Aim => m_Wrapper.m_BaseGameplay_Aim;
         public InputAction @Action => m_Wrapper.m_BaseGameplay_Action;
+        public InputAction @Ability => m_Wrapper.m_BaseGameplay_Ability;
         public InputActionMap Get() { return m_Wrapper.m_BaseGameplay; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -260,6 +282,9 @@ public class @InputActions : IInputActionCollection, IDisposable
                 @Action.started -= m_Wrapper.m_BaseGameplayActionsCallbackInterface.OnAction;
                 @Action.performed -= m_Wrapper.m_BaseGameplayActionsCallbackInterface.OnAction;
                 @Action.canceled -= m_Wrapper.m_BaseGameplayActionsCallbackInterface.OnAction;
+                @Ability.started -= m_Wrapper.m_BaseGameplayActionsCallbackInterface.OnAbility;
+                @Ability.performed -= m_Wrapper.m_BaseGameplayActionsCallbackInterface.OnAbility;
+                @Ability.canceled -= m_Wrapper.m_BaseGameplayActionsCallbackInterface.OnAbility;
             }
             m_Wrapper.m_BaseGameplayActionsCallbackInterface = instance;
             if (instance != null)
@@ -270,6 +295,9 @@ public class @InputActions : IInputActionCollection, IDisposable
                 @Action.started += instance.OnAction;
                 @Action.performed += instance.OnAction;
                 @Action.canceled += instance.OnAction;
+                @Ability.started += instance.OnAbility;
+                @Ability.performed += instance.OnAbility;
+                @Ability.canceled += instance.OnAbility;
             }
         }
     }
@@ -278,5 +306,6 @@ public class @InputActions : IInputActionCollection, IDisposable
     {
         void OnAim(InputAction.CallbackContext context);
         void OnAction(InputAction.CallbackContext context);
+        void OnAbility(InputAction.CallbackContext context);
     }
 }

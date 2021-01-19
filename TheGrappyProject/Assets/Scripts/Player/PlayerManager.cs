@@ -24,7 +24,7 @@ public class PlayerManager : MonoBehaviour {
     private Phase _phase;
     private Vector2 _aimDelta;
     private bool _onActionEnd;
-    private Transform _grapPoint;
+    private Vector3 _grapPoint;
     public enum Phase {
         aim,
         grap
@@ -72,7 +72,7 @@ public class PlayerManager : MonoBehaviour {
     }
     public void StartGrapPhase () {
         aimPhase.End ();
-        grapPhase.Switch (_grapPoint.position);
+        grapPhase.Switch (_grapPoint);
         _phase = Phase.grap;
     }
     Vector2 zero = new Vector2 (0, 0);
