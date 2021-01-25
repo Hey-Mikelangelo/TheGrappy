@@ -1,0 +1,6 @@
+.vs/*
+.vscode/*
+obj/*
+Assembly-CSharp.csproj
+Assembly-CSharp-Editor.csproj
+TheGrappyProject.sln
