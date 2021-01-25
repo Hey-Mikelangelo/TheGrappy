@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5280dfc96b146e449b298e47cd64b32, type: 3}
+  m_Name: MapDataSO
+  m_EditorClassIdentifier: 
+  collectibleGenerator: {fileID: 11400000, guid: 5e1636357cd571447ad13bf522a795e2,
+    type: 2}
+  wallGenerator: {fileID: 11400000, guid: d0606c2b2965468438e9e867706af086, type: 2}
+  chunkSize: 100
+  perlinResolution: 3
+  perlinScale: 0.3
+  wallPerlinThreshold: 0.07
+  wallCellScaling: 2
+  coinsPerlinThreshold: 0.9
+  coinsCellScaling: 5

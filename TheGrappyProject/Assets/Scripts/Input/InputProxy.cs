@@ -29,7 +29,6 @@ public class InputProxy : ScriptableObject, InputActions.IBaseGameplayActions {
 
     }
     public void OnAction (InputAction.CallbackContext context) {
-       // Debug.Log (context.phase);
         if (context.started)
             actionStartEvent?.Invoke ();
         else if (context.canceled)

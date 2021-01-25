@@ -63,9 +63,16 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\Editor\CollectibleManagerEditor.cs" />
+    <Compile Include="Assets\Scripts\Editor\ColorPointDrawer.cs" />
+    <Compile Include="Assets\Scripts\Editor\EditorList.cs" />
+    <Compile Include="Assets\Scripts\Editor\ListTesterInspector.cs" />
+    <Compile Include="Assets\Scripts\Editor\LoadTestEditor.cs" />
     <Compile Include="Assets\Scripts\Editor\MapGeneratorManagerEditor.cs" />
     <Compile Include="Assets\Scripts\Editor\PlayerManagerEditor.cs" />
-    <Compile Include="Assets\Scripts\Editor\SceneManagerEditor.cs" />
+    <Compile Include="Assets\Scripts\Editor\SceneAccess\SceneAccessHolderSO.cs" />
+    <Compile Include="Assets\Scripts\Editor\SceneAccess\SceneAccessTool.cs" />
+    <Compile Include="Assets\Scripts\Editor\SceneAccess\SceneInfoAssetCreatorEditor.cs" />
     <Compile Include="Assets\Scripts\Editor\ShowOnlyDrawer.cs" />
     <Reference Include="UnityEngine">
       <HintPath>C:/Program Files/Unity/Hub/Editor/2019.4.17f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
@@ -720,6 +727,9 @@
     </Reference>
     <Reference Include="UnityEditor.UI">
       <HintPath>D:/unityProjects/TheGrappy/TheGrappy/TheGrappyProject/Library/ScriptAssemblies/UnityEditor.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEditor.UIBuilderModule">
+      <HintPath>D:/unityProjects/TheGrappy/TheGrappy/TheGrappyProject/Library/ScriptAssemblies/UnityEditor.UIBuilderModule.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

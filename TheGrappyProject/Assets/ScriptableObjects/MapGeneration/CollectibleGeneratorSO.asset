@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dac106126799a4442b8532546f880ed9, type: 3}
+  m_Name: CollectibleGeneratorSO
+  m_EditorClassIdentifier: 
+  wallGenerator: {fileID: 11400000, guid: d0606c2b2965468438e9e867706af086, type: 2}
+  mapData: {fileID: 11400000, guid: 2598dc7976e370246a3030d496b059c5, type: 2}
+  coinPrefab: {fileID: 5113129272739643932, guid: c98e0ecf0dc01c644b9a27aacefb8677,
+    type: 3}

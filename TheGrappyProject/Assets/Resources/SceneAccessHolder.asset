@@ -13,6 +13,25 @@ MonoBehaviour:
   m_Name: SceneAccessHolder
   m_EditorClassIdentifier: 
   sceneList:
-  - name: SampleScene
-    path: D:\unityProjects\TheGrappy\TheGrappy\TheGrappyProject\Assets\Scenes\SampleScene.unity
+  - name: Fakes
+    path: D:\unityProjects\TheGrappy\TheGrappy\TheGrappyProject\Assets\Scenes\Fakes.unity
+    visible: 1
+  - name: Initialisation
+    path: D:\unityProjects\TheGrappy\TheGrappy\TheGrappyProject\Assets\Scenes\Initialisation.unity
+    visible: 1
+  - name: Learning
+    path: D:\unityProjects\TheGrappy\TheGrappy\TheGrappyProject\Assets\Scenes\Learning.unity
+    visible: 1
+  - name: LoadingScreen
+    path: D:\unityProjects\TheGrappy\TheGrappy\TheGrappyProject\Assets\Scenes\LoadingScreen.unity
+    visible: 1
+  - name: MainMenu
+    path: D:\unityProjects\TheGrappy\TheGrappy\TheGrappyProject\Assets\Scenes\MainMenu.unity
+    visible: 1
+  - name: New Scene
+    path: D:\unityProjects\TheGrappy\TheGrappy\TheGrappyProject\Assets\Scenes\New
+      Scene.unity
+    visible: 1
+  - name: TestGrounds
+    path: D:\unityProjects\TheGrappy\TheGrappy\TheGrappyProject\Assets\Scenes\TestGrounds.unity
     visible: 1

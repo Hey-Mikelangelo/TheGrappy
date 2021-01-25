@@ -17,7 +17,6 @@ public class MapGeneratorManagerEditor : Editor
         }
         if (GUILayout.Button("spawn"))
         {
-
         }
     }
 }

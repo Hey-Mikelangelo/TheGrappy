@@ -6,5 +6,6 @@ using UnityEngine;
 
 public class Linker : ScriptableObject {
     public InputProxy inputProxy;
+    public VoidEventChannelSO playerDeath;
 
 }
