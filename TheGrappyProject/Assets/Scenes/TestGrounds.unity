@@ -1577,6 +1577,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 832ef16311833214aa81f120a9a40f9e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  SceneLoadingManager: {fileID: 11400000, guid: e04f8069b5076a84385a766024aada27,
+    type: 2}
   mapData: {fileID: 11400000, guid: 2598dc7976e370246a3030d496b059c5, type: 2}
   chunks: {x: 3, y: 3}
 --- !u!1001 &6047750395874032174

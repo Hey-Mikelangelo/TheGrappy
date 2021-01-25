@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 
@@ -22,7 +23,7 @@ public class SceneTransitionSO : ScriptableObject
     private RuntimeAnimatorController _animatorController;
     private MonoBehaviour _coroutineCaller;
     private bool _hasAnimator = false;
-
+    private Scene _persistentScene;
     static void SetAsCurrentTransition(SceneTransitionSO transition)
     {
         currentTransition = transition;
@@ -35,16 +36,21 @@ public class SceneTransitionSO : ScriptableObject
 
     /// <summary>
     /// In most cases pass "this" as "coroutineCaller". 
-    /// Instantiates transitionCanvas, waits for end of start-transition 
+    /// Instantiates transitionCanvas in persistent scene, waits for end of start-transition 
     /// animation and fires the "onStartTransitionCompleted" event (UnityAction).
     /// Call "EndTransition" to play end-transition animation. Fires "onEndTransitionCompleted" 
     /// event (UnityAction) on end-transition animation completion.
     /// </summary>
     /// <param name="coroutineCaller">in most cases just pass "this"</param>
-    public void StartTransition(MonoBehaviour coroutineCaller)
+    public void StartTransition(MonoBehaviour coroutineCaller, Scene persistentScene)
     {
+        _persistentScene = persistentScene;
+        Debug.Log("StartTransition");
         SceneTransitionSO.SetAsCurrentTransition(this);
+        Scene oldActiveScene = SceneManager.GetActiveScene();
+        SceneManager.SetActiveScene(_persistentScene);
         _transitionCanvasInstance = Instantiate(transitionCanvas);
+        SceneManager.SetActiveScene(oldActiveScene);
         _transitionCanvasInstance.GetComponent<Canvas>().sortingOrder = 255;
         _coroutineCaller = coroutineCaller;
         CheckComponents();
@@ -73,6 +79,7 @@ public class SceneTransitionSO : ScriptableObject
     /// </summary>
     public void EndTransition()
     {
+        Debug.Log("End transition");
         float transitionTime = _animatorController.animationClips[1].length;
         _animator.ResetTrigger("start");
         _animator.SetTrigger("end");

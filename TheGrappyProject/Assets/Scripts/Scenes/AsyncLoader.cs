@@ -31,7 +31,6 @@ public static class AsyncLoader
         }
         else
         {
-            Debug.Log("OnAsyncSceneLoad complete");
             AsyncOpToSceneBuildIndexDict.Remove(asyncOp);
             asyncOp.allowSceneActivation = true;
             LoadScenesAsyncOperations.Remove(asyncOp);

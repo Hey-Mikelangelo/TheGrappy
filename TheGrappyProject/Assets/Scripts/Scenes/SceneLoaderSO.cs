@@ -23,17 +23,16 @@ public class SceneLoaderSO : ScriptableObject
     {
         Application.Quit();
     }
-    private void OnEnable()
+    /*private void OnEnable()
     {
         AsyncLoader.onSceneLoaded += OnSceneLoaded;
         AsyncLoader.onSceneUnloaded += OnSceneUnloaded;
-        Debug.Log("SceneLoaderSO on enable");
     }
     private void OnDisable()
     {
         AsyncLoader.onSceneLoaded -= OnSceneLoaded;
         AsyncLoader.onSceneUnloaded -= OnSceneUnloaded;
-    }
+    }*/
     /// <summary>
     /// Unloads all active scenes exluding persistent scenes,
     /// loads "Scenes" and sets first scene in the list as active scene

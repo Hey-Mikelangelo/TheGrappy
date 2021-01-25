@@ -10,7 +10,7 @@ public class LoadTestEditor : Editor
     {
         base.OnInspectorGUI();
         LoadTest script = (LoadTest)target;
-        if (GUILayout.Button("Load"))
+       /* if (GUILayout.Button("Load"))
         {
             script.Load();
         }
@@ -21,6 +21,6 @@ public class LoadTestEditor : Editor
         if (GUILayout.Button("FadeEnd"))
         {
             script.EndLoadingScreen();
-        }
+        }*/
     }
 }

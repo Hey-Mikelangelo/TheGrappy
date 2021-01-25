@@ -4,15 +4,15 @@ using UnityEngine;
 
 public class ScenesToLoadHolder : MonoBehaviour
 {
-    public SceneLoaderSO sceneLoader;
+    public SceneLoadingManagerSO sceneLoadingManager;
     public List<SceneInfoSO> scenesToLoad = new List<SceneInfoSO>(1);
 
     public void LoadScenes()
     {
-        sceneLoader.LoadScenes(scenesToLoad);
+        sceneLoadingManager.LoadScenes(scenesToLoad, true);
     }
     private void Awake()
     {
-        sceneLoader.LoadAlwaysLoadScene();
+        sceneLoadingManager.LoadPersistentScenes();
     }
 }

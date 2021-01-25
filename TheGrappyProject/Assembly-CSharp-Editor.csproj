@@ -716,6 +716,9 @@
     <Reference Include="Unity.Mathematics.Editor">
       <HintPath>D:/unityProjects/TheGrappy/TheGrappy/TheGrappyProject/Library/ScriptAssemblies/Unity.Mathematics.Editor.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEditor.UIBuilderModule">
+      <HintPath>D:/unityProjects/TheGrappy/TheGrappy/TheGrappyProject/Library/ScriptAssemblies/UnityEditor.UIBuilderModule.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.TextMeshPro">
       <HintPath>D:/unityProjects/TheGrappy/TheGrappy/TheGrappyProject/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
     </Reference>
@@ -727,9 +730,6 @@
     </Reference>
     <Reference Include="UnityEditor.UI">
       <HintPath>D:/unityProjects/TheGrappy/TheGrappy/TheGrappyProject/Library/ScriptAssemblies/UnityEditor.UI.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor.UIBuilderModule">
-      <HintPath>D:/unityProjects/TheGrappy/TheGrappy/TheGrappyProject/Library/ScriptAssemblies/UnityEditor.UIBuilderModule.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

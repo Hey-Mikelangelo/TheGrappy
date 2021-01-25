@@ -502,9 +502,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8bbb1bfc1d6c184f86aa408f6a6ca78, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sceneLoader: {fileID: 11400000, guid: 14f179cfa540ffe44bb18ce2134bb960, type: 2}
+  sceneLoadingManager: {fileID: 11400000, guid: e04f8069b5076a84385a766024aada27,
+    type: 2}
   scenesToLoad:
   - {fileID: 11400000, guid: c32f6dead18357e489ef128e7b16db23, type: 2}
+  - {fileID: 11400000, guid: 7b6d2c5526140b5468785d250764e8c1, type: 2}
+  - {fileID: 11400000, guid: 7b6d2c5526140b5468785d250764e8c1, type: 2}
+  - {fileID: 11400000, guid: 7b6d2c5526140b5468785d250764e8c1, type: 2}
+  - {fileID: 11400000, guid: 7b6d2c5526140b5468785d250764e8c1, type: 2}
+  - {fileID: 11400000, guid: 7b6d2c5526140b5468785d250764e8c1, type: 2}
+  - {fileID: 11400000, guid: 7b6d2c5526140b5468785d250764e8c1, type: 2}
+  - {fileID: 11400000, guid: 7b6d2c5526140b5468785d250764e8c1, type: 2}
+  - {fileID: 11400000, guid: 7b6d2c5526140b5468785d250764e8c1, type: 2}
+  - {fileID: 11400000, guid: 7b6d2c5526140b5468785d250764e8c1, type: 2}
 --- !u!1 &904229430
 GameObject:
   m_ObjectHideFlags: 0

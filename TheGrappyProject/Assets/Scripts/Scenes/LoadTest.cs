@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class LoadTest : MonoBehaviour
 {
-    public SceneTransitionSO sceneTransition;
+    /*public SceneTransitionSO sceneTransition;
     public SceneLoaderSO sceneLoader;
     public SceneInfoSO persistentScene;
 
@@ -39,7 +39,7 @@ public class LoadTest : MonoBehaviour
     }
     public void EndLoadingScreen()
     {
-        sceneTransition.EndTransition();
+       // sceneTransition.EndTransition();
     }
     IEnumerator ProgressBar()
     {
@@ -67,7 +67,7 @@ public class LoadTest : MonoBehaviour
         {
             yield return null;
         }
-        sceneTransition.EndTransition();
+        //sceneTransition.EndTransition();
 
-    }
+    }*/
 }

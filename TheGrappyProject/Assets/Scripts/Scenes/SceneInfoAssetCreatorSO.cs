@@ -19,9 +19,10 @@ public class SceneInfoAssetCreatorSO : ScriptableObject
 
     private void OnEnable()
     {
+        UpdateAssets();
         if (!refreshed)
         {
-            UpdateAssets();
+            
             refreshed = true;
         }
         EditorApplication.quitting += OnQuittingEditor;

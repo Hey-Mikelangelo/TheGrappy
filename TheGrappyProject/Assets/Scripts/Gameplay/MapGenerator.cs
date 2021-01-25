@@ -7,14 +7,14 @@ using UnityEngine.SceneManagement;
 
 public class MapGenerator : MonoBehaviour
 {
+    public SceneLoadingManagerSO SceneLoadingManager;
     public MapDataSO mapData;
 
     public Vector2 chunks;
     
-    private void Awake()
+    private void Start()
     {
-        Debug.Log("OnEnable mapGenerator");
-        StartCoroutine(TryGenerateChunks());
+        GenerateChunks();
     }
     IEnumerator TryGenerateChunks()
     {
@@ -23,6 +23,10 @@ public class MapGenerator : MonoBehaviour
         {
             yield return null;
         }
+        GenerateChunks();
+    }
+    void GenerateChunks()
+    {
         for (int i = 0; i < chunks.x; i++)
         {
             for (int j = 0; j < chunks.y; j++)
@@ -31,7 +35,8 @@ public class MapGenerator : MonoBehaviour
                 //mapData.wallGenerator.CreateWalls(i, j);
             }
         }
-        AsyncLoader.onNewSceneInitCompleted?.Invoke();
+        Scene scene = gameObject.scene;
+        SceneLoadingManager.SetSceneInited((sceneInfo)scene);
     }
     void GenerateMapChunk(int chunkX, int chunkY)
     {
