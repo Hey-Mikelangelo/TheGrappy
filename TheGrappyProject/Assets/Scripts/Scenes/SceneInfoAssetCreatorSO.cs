@@ -6,6 +6,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Unity.EditorCoroutines.Editor;
 
 [CreateAssetMenu(fileName = "SceneInfoAssetCreatorSO", menuName = "Scene Data/SceneInfoAssetCreator")]
 public class SceneInfoAssetCreatorSO : ScriptableObject
@@ -14,69 +15,120 @@ public class SceneInfoAssetCreatorSO : ScriptableObject
     public int sceneCount;
     private string assetsFolderPath;
     List<sceneInfo> BuildSceneInfos = new List<sceneInfo>();
+    private static SceneInfoAssetCreatorSO Instance;
+    public static void CallUpdateAssets()
+    {
+        //needed delay because buildSettings scenes are not changed immidiately
+        EditorCoroutineUtility.StartCoroutine(StartUpdateWithDelay(), Instance);
+        
+    }
+    static IEnumerator StartUpdateWithDelay()
+    {
+        for (int i = 0; i < 500; i++)
+        {
+            yield return null;
+        }
+        Instance.UpdateAssets();
+    }
+    static SceneInfoAssetCreatorSO()
+    {
+
+    }
 
     private void OnEnable()
     {
-        EditorBuildSettings.sceneListChanged += UpdateAssets;
+        EditorBuildSettings.sceneListChanged += UpdateAssetsChangedInBuildSettings;
+        Instance = this;
     }
     private void OnDisable()
     {
-        EditorBuildSettings.sceneListChanged -= UpdateAssets;
+        EditorBuildSettings.sceneListChanged -= UpdateAssetsChangedInBuildSettings;
     }
-    private void OnDestroy()
+    public void UpdateAssetsChangedInBuildSettings()
     {
+        Debug.Log("UpdateAssetsChangedInBuildSettings");
+
+        UpdateAssets(true);
+    }
+    public void UpdateAssetsChangedInFolder()
+    {
+        Debug.Log("UpdateAssetsChangedInFolder");
+        UpdateAssets();
 
     }
-    public void UpdateAssets()
+    public void UpdateAssets(bool changedBuildSettinsOrder = false)
     {
         Debug.Log("Update assets");
         assetsFolderPath = sceneInfoHolderSO.sceneInfoSOPath;
         InspectForNullReferences();
         SetSceneInfos();
-        DeleteAndUpdateAssets();
+        DeleteAndUpdateAssets(changedBuildSettinsOrder);
         CreateAssets();
     }
-    int TryGetUpdatedSceneInBuildSettings(sceneInfo sceneInfo)
+    int TryGetUpdatedPath(sceneInfo sceneInfo)
     {
-        //for each scene in build settings check if scene actualy is removed or just changed name, path or build index
+        //for each scene in build settings check if scene actualy is removed or just changed path (name)
         for (int i = 0; i < BuildSceneInfos.Count; i++)
         {
             sceneInfo scene = BuildSceneInfos.ElementAt(i);
             //check name and index
-            if (scene.name == sceneInfo.name && scene.buildIndex == sceneInfo.buildIndex)
-            {
-                return i;
-            }
-            //check name and path
-            else if (scene.name == sceneInfo.name && scene.path == sceneInfo.path)
-            {
-                return i;
-            }
-            //check index
-            else if (scene.buildIndex == sceneInfo.buildIndex)
+            if (scene.buildIndex == sceneInfo.buildIndex)
             {
                 return i;
             }
         }
         return -1;
     }
-    void DeleteAndUpdateAssets()
+    int TryGetUpdatedBuildIndex(sceneInfo sceneInfo)
+    {
+        //for each scene in build settings check if scene actualy is removed or just changed path (name)
+        for (int i = 0; i < BuildSceneInfos.Count; i++)
+        {
+            sceneInfo scene = BuildSceneInfos.ElementAt(i);
+            //check name and index
+            if (scene.path == sceneInfo.path)
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+    void DeleteAndUpdateAssets(bool changedBuildSettinsOrder)
     {
         int count = sceneInfoHolderSO.SceneInfoList.Count;
         List<SceneInfoSO> SceneInfoListCopy = new List<SceneInfoSO>(sceneInfoHolderSO.SceneInfoList);
+        /*foreach (var scenet in BuildSceneInfos)
+        {
+            Debug.Log(scenet.buildIndex + " - " + scenet.name);
+        }*/
+
         for (int i = 0; i < count; i++)
         {
             SceneInfoSO sceneInfoSO = SceneInfoListCopy.ElementAt(i);
+            if (sceneInfoSO == null)
+            {
+                continue;
+            }
             sceneInfo scene = (sceneInfo)sceneInfoSO;
             //because from build settings we cannot get info does scene needsInitialisation 
             scene.needsInitialisation = false;
+
             if (!BuildSceneInfos.Contains(scene))
             {
+                int maybeIndex;
                 string oldName = scene.name;
-                int maybeIndex = TryGetUpdatedSceneInBuildSettings(scene);
+
+                if (!changedBuildSettinsOrder)
+                {
+                    maybeIndex = TryGetUpdatedPath(scene);
+                }
+                else
+                {
+                    maybeIndex = TryGetUpdatedBuildIndex(scene);
+                }
                 if (maybeIndex != -1)
                 {
-                    sceneInfo buildSettingsSceneInfo = BuildSceneInfos.ElementAt(i);
+                    sceneInfo buildSettingsSceneInfo = BuildSceneInfos.ElementAt(maybeIndex);
                     sceneInfoSO.name = buildSettingsSceneInfo.name;
                     sceneInfoSO.path = buildSettingsSceneInfo.path;
                     sceneInfoSO.buildIndex = buildSettingsSceneInfo.buildIndex;
@@ -155,6 +207,7 @@ public class SceneInfoAssetCreatorSO : ScriptableObject
             string path = buildScenes[i].path;
             if (File.Exists(path))
             {
+                Debug.Log(path + " - " + SceneUtility.GetBuildIndexByScenePath(path));
                 sceneInfo = new sceneInfo
                 (
                     name: Path.GetFileNameWithoutExtension(path),

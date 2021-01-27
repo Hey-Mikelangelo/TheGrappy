@@ -27,6 +27,6 @@ public struct sceneInfo : System.IEquatable<sceneInfo>
 	}
 	public bool Equals(sceneInfo other)
 	{
-		return path == other.path;
+		return (name == other.name && path == other.path && buildIndex == other.buildIndex);
 	}
 }

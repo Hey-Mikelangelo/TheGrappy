@@ -57,6 +57,6 @@ public class SceneInfoSO : ScriptableObject
 	}
 	public bool Equals(SceneInfoSO other)
 	{
-		return path == other.path;
+		return (name == other.name && path == other.path && buildIndex == other.buildIndex);
 	}
 }
