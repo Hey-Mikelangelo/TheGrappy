@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 
 public class MapGenerator : MonoBehaviour
 {
-    public SceneLoadingManagerSO SceneLoadingManager;
+    public SceneLoadingChannelSO sceneLoadingChannel;
     public MapDataSO mapData;
 
     public Vector2 chunks;
@@ -36,7 +36,7 @@ public class MapGenerator : MonoBehaviour
             }
         }
         Scene scene = gameObject.scene;
-        SceneLoadingManager.SetSceneInited((sceneInfo)scene);
+        sceneLoadingChannel.SetSceneInited(scene.buildIndex);
     }
     void GenerateMapChunk(int chunkX, int chunkY)
     {

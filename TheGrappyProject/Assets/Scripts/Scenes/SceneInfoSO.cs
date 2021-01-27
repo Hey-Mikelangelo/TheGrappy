@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
+[System.Serializable]
 public class SceneInfoSO : ScriptableObject
 {
 	public new string name;

@@ -131,6 +131,11 @@ public static class AsyncLoader
     public static AsyncOperation UnloadSceneAsync(int buildIndex, bool register = true)
     {
         AsyncOperation asyncOp = SceneManager.UnloadSceneAsync(buildIndex);
+        if(asyncOp == null)
+        {
+            Debug.LogError("scene is not in build settings");
+            return null;
+        }
         if (register)
         {
             //add to dictionary to associate buildIndex with AsyncOperation

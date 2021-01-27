@@ -215,7 +215,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1013366825}
-  - component: {fileID: 1013366826}
   - component: {fileID: 1013366827}
   m_Layer: 0
   m_Name: SceneLoader
@@ -238,18 +237,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1013366826
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1013366824}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 39974928e6e01204387b64df5f5e1966, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1013366827
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -259,77 +246,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 1013366824}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1898172d2bc22664c866a0a60eebb070, type: 3}
+  m_Script: {fileID: 11500000, guid: 52d370ce38ef44b41ab441fdc14437c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sceneLoadingManager: {fileID: 11400000, guid: e04f8069b5076a84385a766024aada27,
+  sceneLoadingChannelSO: {fileID: 11400000, guid: e11ff3edc45699c4494a83827bdf8854,
     type: 2}
---- !u!1001 &3875518371784194545
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 761302873255235504, guid: a1106889f5ef23e4eaadeaff87542afe,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 761302873255235504, guid: a1106889f5ef23e4eaadeaff87542afe,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 761302873255235504, guid: a1106889f5ef23e4eaadeaff87542afe,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 761302873255235504, guid: a1106889f5ef23e4eaadeaff87542afe,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 761302873255235504, guid: a1106889f5ef23e4eaadeaff87542afe,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 761302873255235504, guid: a1106889f5ef23e4eaadeaff87542afe,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 761302873255235504, guid: a1106889f5ef23e4eaadeaff87542afe,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 761302873255235504, guid: a1106889f5ef23e4eaadeaff87542afe,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 761302873255235504, guid: a1106889f5ef23e4eaadeaff87542afe,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 761302873255235504, guid: a1106889f5ef23e4eaadeaff87542afe,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 761302873255235504, guid: a1106889f5ef23e4eaadeaff87542afe,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2325671628616397490, guid: a1106889f5ef23e4eaadeaff87542afe,
-        type: 3}
-      propertyPath: m_Name
-      value: WhiteCircle
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: a1106889f5ef23e4eaadeaff87542afe, type: 3}
+  PersistentScenes:
+  - {fileID: 11400000, guid: 49b78fa6d05b57b43bc9a1551476ec24, type: 2}
+  SceneTransitions:
+  - {fileID: 11400000, guid: 7b0b80c31cb6d8a4a9ef59d495519549, type: 2}
+  - {fileID: 11400000, guid: 1d0bd0899a5b2094481c8c84f6930536, type: 2}
+  CurrentLoadingScenes: []
+  isLoadingScreen: 0
+  loadingProgress: 0
+  currentSceneTransition: {fileID: 0}

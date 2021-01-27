@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81eec9016f7559c4f881c490cd0b0047, type: 3}
   m_Name: New Scene
   m_EditorClassIdentifier: 
-  name: 
-  path: 
-  buildIndex: 0
+  name: New Scene
+  path: D:\unityProjects\TheGrappy\TheGrappy\TheGrappyProject\Assets\Scenes\New Scene.unity
+  buildIndex: 5
+  needsInitialisation: 0

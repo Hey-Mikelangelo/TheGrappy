@@ -15,9 +15,12 @@ EditorBuildSettings:
     path: Assets/Scenes/Initialisation.unity
     guid: 9536c065e68eddf448a53266da63db00
   - enabled: 1
-    path: Assets/Scenes/Fakes.unity
-    guid: 7cd2f1040de6658479aa2f6591767a25
+    path: Assets/Scenes/Menus/MainMenu.unity
+    guid: ef693c1ea1840a741810abd5b0c5aa56
   - enabled: 1
     path: Assets/Scenes/New Scene.unity
     guid: 90b2031032b6f8247858b3686d20ca5e
+  - enabled: 1
+    path: Assets/Scenes/Fake.unity
+    guid: 58a8fe2cffb989140ac95ac5aad1d38b
   m_configObjects: {}

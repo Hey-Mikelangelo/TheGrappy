@@ -71,6 +71,7 @@ public class SceneTransitionSO : ScriptableObject
     IEnumerator StartTransitionCompletedCaller(float transitionTime)
     {
         yield return new WaitForSeconds(transitionTime);
+        Debug.Log(transitionCanvas + "OnStartTransitionCompleted");
         onStartTransitionCompleted?.Invoke();
     }
     /// <summary>
