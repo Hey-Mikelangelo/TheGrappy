@@ -20,7 +20,6 @@ public static class SceneLoader
     {
         AsyncLoader.onSceneLoaded += OnSceneLoaded;
         AsyncLoader.onSceneUnloaded += OnSceneUnloaded;
-        Debug.Log("SceneLoaderSO on enable");
     }
     private static void OnDisable()
     {
@@ -65,7 +64,6 @@ public static class SceneLoader
         if (AsyncLoader.ScenesLeftToLoad <= 0)
         {
             SceneManager.SetActiveScene(SceneManager.GetSceneByBuildIndex(_newActiveSceneIndex));
-            Debug.Log("active scene: " + SceneManager.GetActiveScene().name);
             onScenesLoaded?.Invoke();
             AsyncLoader.onSceneLoaded -= OnSceneLoaded;
             AsyncLoader.onSceneUnloaded -= OnSceneUnloaded;
@@ -137,7 +135,6 @@ public static class SceneLoader
         }
         foreach (int buildIndex in SceneIndexes)
         {
-            Debug.Log("unload" + SceneManager.GetSceneByBuildIndex(buildIndex).name);
             AsyncLoader.UnloadSceneAsync(buildIndex);
         }
         //Continues in "OnSceneUnloaded"

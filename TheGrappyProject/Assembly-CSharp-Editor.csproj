@@ -659,6 +659,9 @@
     <Reference Include="Unity.2D.Path.Editor">
       <HintPath>D:/unityProjects/TheGrappy/TheGrappy/TheGrappyProject/Library/ScriptAssemblies/Unity.2D.Path.Editor.dll</HintPath>
     </Reference>
+    <Reference Include="Unity.EditorCoroutines.Editor">
+      <HintPath>D:/unityProjects/TheGrappy/TheGrappy/TheGrappyProject/Library/ScriptAssemblies/Unity.EditorCoroutines.Editor.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.DeviceSimulator.Tests.Common">
       <HintPath>D:/unityProjects/TheGrappy/TheGrappy/TheGrappyProject/Library/ScriptAssemblies/Unity.DeviceSimulator.Tests.Common.dll</HintPath>
     </Reference>
@@ -730,9 +733,6 @@
     </Reference>
     <Reference Include="UnityEditor.UI">
       <HintPath>D:/unityProjects/TheGrappy/TheGrappy/TheGrappyProject/Library/ScriptAssemblies/UnityEditor.UI.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.EditorCoroutines.Editor">
-      <HintPath>D:/unityProjects/TheGrappy/TheGrappy/TheGrappyProject/Library/ScriptAssemblies/Unity.EditorCoroutines.Editor.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

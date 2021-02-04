@@ -19,7 +19,6 @@ public class SceneSwitch : MonoBehaviour
     }
     public void Awake()
     {
-        Debug.Log(gameObject.name);
         channel.LoadInitScene();
     }
 }

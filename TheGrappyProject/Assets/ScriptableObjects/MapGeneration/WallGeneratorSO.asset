@@ -15,3 +15,4 @@ MonoBehaviour:
   mapData: {fileID: 11400000, guid: 2598dc7976e370246a3030d496b059c5, type: 2}
   wallPiecePrefab: {fileID: 8849424771065878535, guid: 0a6491ac8eafc8e4d99adfa3865a54d3,
     type: 3}
+  wallTile: {fileID: 11400000, guid: 45d62d681068d2b468ca0712a26c0d73, type: 2}

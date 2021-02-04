@@ -14,5 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   wallGenerator: {fileID: 11400000, guid: d0606c2b2965468438e9e867706af086, type: 2}
   mapData: {fileID: 11400000, guid: 2598dc7976e370246a3030d496b059c5, type: 2}
-  coinPrefab: {fileID: 5113129272739643932, guid: c98e0ecf0dc01c644b9a27aacefb8677,
-    type: 3}
+  coinTile: {fileID: 11400000, guid: 1cd34f353da24f04d9f97bbf8b54121c, type: 2}
+  Powerups:
+  - {fileID: 11400000, guid: 6f5af9f02d9e0e145b19d9cba641fb2a, type: 2}
+  - {fileID: 11400000, guid: c2f49d0e4457f6d439d4efefdc097a9c, type: 2}

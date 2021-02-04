@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using UnityEngine;
 public class CollectibleItem : MonoBehaviour
 {
@@ -11,5 +12,9 @@ public class CollectibleItem : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+    private void Start()
+    {
+        //Destroy(GetComponent<Rigidbody2D>());
     }
 }

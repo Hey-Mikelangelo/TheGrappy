@@ -1,18 +1,48 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
+using TMPro;
+using TMPro.EditorUtilities;
 using UnityEngine;
+using UnityEngine.Tilemaps;
+using UnityEngine.UIElements;
+
+public enum Ability
+{
+    none,
+    sideBoost,
+    oneShot
+}
+
 
 [RequireComponent (typeof (AimPhase))]
 [RequireComponent (typeof (GrapPhase))]
+
 public class PlayerManager : MonoBehaviour {
-    public Linker linker;
+    public bool runGame;
+
+    [Header("Scriptable Objects")]
     public Collision2DEventChannelSO playerCollision;
+    public DataManagerSO dataManager;
+    public LinkerSO linker;
+
+    [Header("Debug data")]
+    public int coinsCount;
+    public string playerName;
+
+    [Header("Game Objects")]
+    public Tilemap collectiblesTilemap;
+    public MapGenerator mapGenerator;
+    public TextMeshProUGUI coinsCountDisplay;
     private GrapPhase grapPhase;
     private AimPhase aimPhase;
 
-    public float speed = 1;
+    [Header("Scripts")]
+    public SideBoost sideBoost;
+    public OneShot oneShot;
+
     [Header ("Aim phase variables")]
+    public float speed = 1;
     public float grapLength = 20;
     public LayerMask grapPointsMask;
 
@@ -29,36 +59,97 @@ public class PlayerManager : MonoBehaviour {
 
     private Vector3 startPos;
     private List<GameObject> CoinsPool;
+
+    public Ability currentAbility;
+
+    private bool _doSideBoost, _doOneShot;
+    public float _force, _boostTime;
+    [Space(10)]
+    public Vector2Int playerChunk;
+    private Vector2Int prevPlayerChunk;
     public enum Phase {
         aim,
         grap
     }
-    private void Awake () {
+    public void GenerateChunks()
+    {
+        mapGenerator.PlayerChangedChunk(playerChunk);
+
+    }
+    Vector2Int GetCurrentChunk()
+    {
+        return mapGenerator.mapData.WorldToChunk(transform.position);
+    }
+    private void Start () {
+       
         CoinsPool = new List<GameObject>();
         aimPhase = GetComponent<AimPhase> ();
         grapPhase = GetComponent<GrapPhase> ();
-        
+        Application.targetFrameRate = 30;
+
+        oneShot.Shoot(transform, _aimDelta);
+        playerChunk = GetCurrentChunk();
+        prevPlayerChunk = playerChunk;
+        GenerateChunks();
+
+        startPos = transform.position;
+        aimPhase.Setup(grapLength, grapPointsMask, speed);
+        grapPhase.Setup(speed, maxRotSpeed, rotToAlignTime, pullSpeed, minOrbitRadius, pullDelay);
+
+        StartAimPhase();
     }
 
     private void OnEnable () {
-        linker.inputProxy.aimEvent += onAim;
-        linker.inputProxy.actionStartEvent += onActionStart;
-        linker.inputProxy.actionEndEvent += onActionEnd;
+        linker.inputProxy.aimEvent += OnAim;
+        linker.inputProxy.actionStartEvent += OnActionStart;
+        linker.inputProxy.actionEndEvent += OnActionEnd;
+        linker.inputProxy.abilityStartEvent += OnAbilityStart;
+        linker.inputProxy.abilityEndEvent += OnAbilityEnd;
+
         playerCollision.collision2DEvent += OnPlayerCollision;
+
+        coinsCountDisplay.text = "Coins: " + dataManager.playerData.coinsCount;
     }
     private void OnDisable () {
-        linker.inputProxy.aimEvent -= onAim;
-        linker.inputProxy.actionStartEvent -= onActionStart;
-        linker.inputProxy.actionEndEvent -= onActionEnd;
+        linker.inputProxy.aimEvent -= OnAim;
+        linker.inputProxy.actionStartEvent -= OnActionStart;
+        linker.inputProxy.actionEndEvent -= OnActionEnd;
+        linker.inputProxy.abilityStartEvent -= OnAbilityStart;
+        linker.inputProxy.abilityEndEvent -= OnAbilityEnd;
+
         playerCollision.collision2DEvent -= OnPlayerCollision;
     }
-    void Start () {
-        startPos = transform.position;
-        aimPhase.Setup (grapLength, grapPointsMask, speed);
-        grapPhase.Setup (speed, maxRotSpeed, rotToAlignTime, pullSpeed, minOrbitRadius, pullDelay);
-        StartAimPhase ();
-    }
+   
     void Update () {
+
+        playerChunk = GetCurrentChunk();
+        if(prevPlayerChunk != playerChunk)
+        {
+            GenerateChunks();
+        }
+        prevPlayerChunk = playerChunk;
+
+        if (!runGame)
+        {
+            return;
+        }
+        switch (currentAbility)
+        {
+            case Ability.oneShot:
+                if (_doOneShot)
+                {
+                    _doOneShot = false;
+                    currentAbility = Ability.none;
+                    oneShot.Shoot(transform, _aimDelta);
+                }
+                break;
+            case Ability.sideBoost:
+                if (_doSideBoost)
+                {
+                    transform.position += sideBoost.SideBoostStep(transform);
+                }
+                break;
+        }
         switch (_phase) {
             case Phase.aim:
                 _grapPoint = aimPhase.Run (_aimDelta, new Vector2 (0, 0));
@@ -67,8 +158,8 @@ public class PlayerManager : MonoBehaviour {
                 grapPhase.Run ();
                 break;
         }
-
     }
+
     private void OnPlayerCollision(GameObject player, Collision2D collision)
     {
         //if not a collectible
@@ -78,10 +169,29 @@ public class PlayerManager : MonoBehaviour {
         }
         else
         {
-            Collectible collectible = collision.gameObject.GetComponent<CollectibleItem>().type;
-            GameObject coin = collision.gameObject;
-            CoinsPool.Add(coin);
-            coin.SetActive(false);
+            Vector3Int tilePos = collectiblesTilemap.WorldToCell(collision.GetContact(0).point);
+            CollectibleTile tile = collectiblesTilemap.GetTile(
+                tilePos) as CollectibleTile;
+            mapGenerator.ChunksCollectiblesRemovedTiles[GetCurrentChunk()].Add(tilePos);
+
+            Collectible collectible = tile.type;
+            switch (collectible)
+            {
+                case Collectible.coin:
+                    GameObject coin = collision.gameObject;
+                    dataManager.playerData.coinsCount += 1;
+                    coinsCountDisplay.text = "Coins: " + dataManager.playerData.coinsCount;
+                    break;
+                case Collectible.oneShot:
+                    currentAbility = Ability.oneShot;
+                    break;
+                case Collectible.sideBoost:
+                    currentAbility = Ability.sideBoost;
+                    break;
+            }
+            collectiblesTilemap.SetTile(tilePos, null);
+
+
         }
     }
     private void Die()
@@ -93,10 +203,6 @@ public class PlayerManager : MonoBehaviour {
             coin.SetActive(true);
         }
         StartAimPhase();
-    }
-    private void MoveForward () {
-        transform.position += transform.up * speed * Time.deltaTime;
-
     }
     public void StartAimPhase () {
         grapPhase.End ();
@@ -110,13 +216,13 @@ public class PlayerManager : MonoBehaviour {
         _phase = Phase.grap;
     }
     Vector2 zero = new Vector2 (0, 0);
-    void onAim (Vector2 delta) {
+    void OnAim (Vector2 delta) {
         if (delta != zero)
             _aimDelta = delta;
     }
-    void onActionStart () {
+    void OnActionStart () {
         if (_phase == Phase.aim) {
-            if (_grapPoint == null) {
+            if (_grapPoint == Vector3.zero) {
                 return;
             }
             StartGrapPhase ();
@@ -124,7 +230,28 @@ public class PlayerManager : MonoBehaviour {
             StartAimPhase ();
         }
     }
-    void onActionEnd () {
+    void OnActionEnd () {
         grapPhase.StopPull ();
+    }
+
+    void OnAbilityStart()
+    {
+        switch (currentAbility)
+        {
+            case Ability.oneShot:
+                _doOneShot = true;
+                break;
+            case Ability.sideBoost:
+                _doSideBoost = true;
+                sideBoost.ResetSideBoost();
+                sideBoost.SetSideBoost(_boostTime, _force, (_aimDelta.x > 0 ? true : false));
+                break;
+        }
+    }
+    void OnAbilityEnd()
+    {
+        _doSideBoost = false;
+        currentAbility = Ability.none;
+
     }
 }

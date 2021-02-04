@@ -15,7 +15,6 @@ public static class SOGenerator<T> where T : ScriptableObject
     static void onDidReloadScripts()
     {
         onAssetsRecompileCompleted?.Invoke();
-        Debug.Log("OnRecompileCompleted");
     }
     //Returns ScriptableObject reference. Creates in SciptableObject asset in AassetDatabase if not exists
     public static T GenerateSO(string name, string filepath)

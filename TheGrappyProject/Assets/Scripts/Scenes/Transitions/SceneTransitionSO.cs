@@ -45,7 +45,6 @@ public class SceneTransitionSO : ScriptableObject
     public void StartTransition(MonoBehaviour coroutineCaller, Scene persistentScene)
     {
         _persistentScene = persistentScene;
-        Debug.Log("StartTransition");
         SceneTransitionSO.SetAsCurrentTransition(this);
         Scene oldActiveScene = SceneManager.GetActiveScene();
         SceneManager.SetActiveScene(_persistentScene);
@@ -71,7 +70,6 @@ public class SceneTransitionSO : ScriptableObject
     IEnumerator StartTransitionCompletedCaller(float transitionTime)
     {
         yield return new WaitForSeconds(transitionTime);
-        Debug.Log(transitionCanvas + "OnStartTransitionCompleted");
         onStartTransitionCompleted?.Invoke();
     }
     /// <summary>
@@ -80,7 +78,6 @@ public class SceneTransitionSO : ScriptableObject
     /// </summary>
     public void EndTransition()
     {
-        Debug.Log("End transition");
         float transitionTime = _animatorController.animationClips[1].length;
         _animator.ResetTrigger("start");
         _animator.SetTrigger("end");

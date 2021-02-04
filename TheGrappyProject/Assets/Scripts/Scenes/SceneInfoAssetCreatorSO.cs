@@ -46,19 +46,15 @@ public class SceneInfoAssetCreatorSO : ScriptableObject
     }
     public void UpdateAssetsChangedInBuildSettings()
     {
-        Debug.Log("UpdateAssetsChangedInBuildSettings");
-
         UpdateAssets(true);
     }
     public void UpdateAssetsChangedInFolder()
     {
-        Debug.Log("UpdateAssetsChangedInFolder");
         UpdateAssets();
 
     }
     public void UpdateAssets(bool changedBuildSettinsOrder = false)
     {
-        Debug.Log("Update assets");
         assetsFolderPath = sceneInfoHolderSO.sceneInfoSOPath;
         InspectForNullReferences();
         SetSceneInfos();
@@ -133,13 +129,11 @@ public class SceneInfoAssetCreatorSO : ScriptableObject
                     sceneInfoSO.path = buildSettingsSceneInfo.path;
                     sceneInfoSO.buildIndex = buildSettingsSceneInfo.buildIndex;
                     string assetPath = assetsFolderPath + "/" + oldName + ".asset";
-                    Debug.Log(assetPath);
                     AssetDatabase.RenameAsset(assetPath, buildSettingsSceneInfo.name);
                 }
                 else
                 {
                     string pathToAsset = assetsFolderPath + "/" + scene.name + ".asset";
-                    Debug.Log("delete: " + pathToAsset + " - index: " + i);
                     sceneInfoHolderSO.SceneInfoList.RemoveAt(i);
                     AssetDatabase.MoveAssetToTrash(pathToAsset);
                 }
@@ -207,7 +201,6 @@ public class SceneInfoAssetCreatorSO : ScriptableObject
             string path = buildScenes[i].path;
             if (File.Exists(path))
             {
-                Debug.Log(path + " - " + SceneUtility.GetBuildIndexByScenePath(path));
                 sceneInfo = new sceneInfo
                 (
                     name: Path.GetFileNameWithoutExtension(path),

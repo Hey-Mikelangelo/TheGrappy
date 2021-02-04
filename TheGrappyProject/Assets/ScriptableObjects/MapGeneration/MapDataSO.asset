@@ -15,10 +15,17 @@ MonoBehaviour:
   collectibleGenerator: {fileID: 11400000, guid: 5e1636357cd571447ad13bf522a795e2,
     type: 2}
   wallGenerator: {fileID: 11400000, guid: d0606c2b2965468438e9e867706af086, type: 2}
-  chunkSize: 100
   perlinResolution: 3
   perlinScale: 0.3
-  wallPerlinThreshold: 0.07
+  chunkSize: 10
+  chunksLoadingRadius: 5
+  wallPerlinThreshold: 0.0714
   wallCellScaling: 2
-  coinsPerlinThreshold: 0.9
-  coinsCellScaling: 5
+  collectiblesPerlinThreshold: 0.9667
+  powerupChance: 0.25
+  collectibleCellScaling: 2
+  Tiles:
+  - {fileID: 11400000, guid: 45d62d681068d2b468ca0712a26c0d73, type: 2}
+  - {fileID: 11400000, guid: 1cd34f353da24f04d9f97bbf8b54121c, type: 2}
+  - {fileID: 11400000, guid: 6f5af9f02d9e0e145b19d9cba641fb2a, type: 2}
+  - {fileID: 11400000, guid: c2f49d0e4457f6d439d4efefdc097a9c, type: 2}
