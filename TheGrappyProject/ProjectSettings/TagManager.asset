@@ -15,8 +15,8 @@ TagManager:
   - 
   - Wall
   - Collectible
-  - 
-  - 
+  - CollectibleMagnet
+  - Bullet
   - 
   - 
   - 
@@ -40,4 +40,10 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: collectibles
+    uniqueID: 4133358759
+    locked: 0
+  - name: UI
+    uniqueID: 4273878153
     locked: 0

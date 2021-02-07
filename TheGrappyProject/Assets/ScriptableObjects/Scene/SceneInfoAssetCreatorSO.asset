@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: SceneInfoAssetCreatorSO
   m_EditorClassIdentifier: 
   sceneInfoHolderSO: {fileID: 11400000, guid: 16752b5c69fe3e14e811f563802fe4fc, type: 2}
-  sceneCount: 6
+  sceneCount: 7

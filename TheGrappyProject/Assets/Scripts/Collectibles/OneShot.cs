@@ -6,7 +6,6 @@ using UnityEngine;
 public class OneShot : MonoBehaviour
 {
     public GameObject bulletPrefab;
-
     public void Shoot(Transform shotFromTransform, Vector2 aimDelta)
     {
         float playerAngle = Mathf.Atan2(shotFromTransform.right.y, shotFromTransform.right.x) * Mathf.Rad2Deg;

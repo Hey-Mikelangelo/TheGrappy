@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: coinTile
   m_EditorClassIdentifier: 
   m_Sprite: {fileID: 21300000, guid: 7e4804a2533b25040b32923d948a5d5c, type: 3}
-  m_Color: {r: 0.9528302, g: 0.8785707, b: 0.098878615, a: 1}
+  m_Color: {r: 0.5, g: 0.4588887, b: 0.028301895, a: 1}
   m_Transform:
     e00: 1
     e01: 0

@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3edb820766b00af4c9b86bd30ed9c88d, type: 3}
+  m_Name: PlayerVarsSO
+  m_EditorClassIdentifier: 
+  isMoving: 1
+  isMapGenerated: 1
+  isWaitingForMapGenerated: 0
+  coinsCount: 0
+  playerName: 
+  currentChunk: {x: -3, y: 9}
+  speed: 1
+  grapLength: 20
+  currentPhase: 0
+  grapPos: {x: -63.997505, y: 196.95187, z: 0}
+  grapTilePos: {x: -65, y: 196, z: 0}
+  hasGrapPoint: 1
+  aimWorldRotation: {x: 0, y: 0, z: 0, w: 0}
+  rotataionToGrapPoint: {x: 0, y: 0, z: 0, w: 0}
+  currentAbility: 1

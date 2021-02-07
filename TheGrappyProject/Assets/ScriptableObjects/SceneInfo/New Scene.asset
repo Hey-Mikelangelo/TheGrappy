@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: New Scene
   path: D:\unityProjects\TheGrappy\TheGrappy\TheGrappyProject\Assets\Scenes\New Scene.unity
-  buildIndex: 5
+  buildIndex: -1
   needsInitialisation: 0

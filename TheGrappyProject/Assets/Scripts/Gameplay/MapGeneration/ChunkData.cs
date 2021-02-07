@@ -9,7 +9,6 @@ public class ChunkData
     {
         public Vector3Int pos;
         public byte tileIndex;
-
         public tileInfo(Vector3Int pos, byte index)
         {
             this.pos = pos;

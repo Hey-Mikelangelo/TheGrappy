@@ -7,5 +7,10 @@ using UnityEngine;
 public class LinkerSO : ScriptableObject {
     public InputProxy inputProxy;
     public VoidEventChannelSO playerDeath;
-
+    public GameEventsSO gameEvents;
+    public PlayerDataSO playerData;
+    public PlayerVarsSO playerVars;
+    public Collision2DEventChannelSO playerCollisionChannel;
+    public MapDataSO mapData;
+    public DataManagerSO dataManager;
 }

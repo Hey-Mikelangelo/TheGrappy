@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Learning
   path: D:\unityProjects\TheGrappy\TheGrappy\TheGrappyProject\Assets\Scenes\Learning.unity
-  buildIndex: 1
+  buildIndex: -1
   needsInitialisation: 0

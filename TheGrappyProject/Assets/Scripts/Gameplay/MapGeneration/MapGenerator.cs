@@ -1,9 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using Unity.Mathematics;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Tilemaps;
@@ -12,37 +8,65 @@ public class MapGenerator : MonoBehaviour
 {
     public SceneLoadingChannelSO sceneLoadingChannel;
     public MapDataSO mapData;
+    public LinkerSO linker;
     public Tilemap wallTilemap;
     public Tilemap collectiblesTilemap;
 
-    private Vector2Int chunks;
     private Vector2Int _currentChunk;
     public List<ChunkData> ChunksCollectibles = new List<ChunkData>();
-    public Dictionary<Vector2Int, List<Vector3Int>> ChunksCollectiblesRemovedTiles 
+    public Dictionary<Vector2Int, List<Vector3Int>> ChunksCollectiblesRemovedTiles
         = new Dictionary<Vector2Int, List<Vector3Int>>();
 
     public List<ChunkData> ChunksWalls = new List<ChunkData>();
 
     public List<Vector2Int> _LoadedChunks;
     public List<Vector2Int> _ChunksNeeded;
-
+    public int chunkCountSide;
     private void Awake()
     {
-        int s = (mapData.chunksLoadingRadius * 2 + 1);
+        chunkCountSide = Mathf.CeilToInt((float)mapData.chunksLoadingRadius / mapData.chunkSize);
+        int s = (chunkCountSide * 2 + 1);
         _LoadedChunks = new List<Vector2Int>(s * s + s);
         _ChunksNeeded = new List<Vector2Int>(s * s);
 
 
     }
-    public void PlayerChangedChunk(Vector2Int currentChunk)
+    
+    public void ClearAreaBox(Vector3 bottomLeft, Vector3 topRight)
     {
+        Vector3Int bottomLeftTile = wallTilemap.WorldToCell(bottomLeft);
+        Vector3Int topRightTile = wallTilemap.WorldToCell(topRight);
+        for (int i = bottomLeftTile.x; i <= topRightTile.x; i++)
+        {
+            for (int j = bottomLeftTile.y; j <= topRightTile.y; j++)
+            {
+                wallTilemap.SetTile(new Vector3Int(i, j, 0), null);
+            }
+        }
+    }
+    public static bool CheckForTile(Tilemap tilemap, Vector3Int tilePos)
+    {
+        return tilemap.GetTile(tilePos) == null ? false : true;
+    }
+    public void UpdateChunks(Vector2Int currentChunk)
+    {
+
         _currentChunk = currentChunk;
 
         StartCoroutine(GenerateChunks());
     }
+    public void OnDrawGizmos()
+    {
+        float chunkCenterOffset = mapData.chunkSize / 2;
+        foreach (var chunk in _LoadedChunks)
+        {
+            Gizmos.DrawWireCube(
+                new Vector3(chunk.x * mapData.chunkSize + chunkCenterOffset, chunk.y * mapData.chunkSize + chunkCenterOffset, 0), new Vector3(mapData.chunkSize, mapData.chunkSize, 0));
+        }
+    }
     IEnumerator GenerateChunks()
     {
-        int chunksLoadingRadius = mapData.chunksLoadingRadius;
+        int chunksLoadingRadius = chunkCountSide;
         int xStartChunk = _currentChunk.x - chunksLoadingRadius;
         int xEndChunk = _currentChunk.x + chunksLoadingRadius;
         int yStartChunk = _currentChunk.y - chunksLoadingRadius;
@@ -63,13 +87,15 @@ public class MapGenerator : MonoBehaviour
                 Vector2Int chunkIndx = _ChunksNeeded[i];
                 ChunkData collectiblesChunk = ChunksCollectibles.Find(
                     ch => ch.chunkIndex == chunkIndx);
-                if(collectiblesChunk != null)
+                if (collectiblesChunk != null)
                 {
                     LoadChunk(collectiblesChunk, collectiblesTilemap);
                     RemoveCollectedTiles(chunkIndx);
                     ChunksWalls.Add(
                         mapData.wallGenerator.CreateWallsChunk(chunkIndx.x, chunkIndx.y, wallTilemap));
                     _LoadedChunks.Add(chunkIndx);
+                    yield return null;
+
                 }
                 else
                 {
@@ -77,7 +103,7 @@ public class MapGenerator : MonoBehaviour
                     _LoadedChunks.Add(chunkIndx);
                     yield return null;
                 }
-                
+
             }
         }
         List<Vector2Int> LoadedChunksCopy = new List<Vector2Int>(_LoadedChunks);
@@ -97,8 +123,9 @@ public class MapGenerator : MonoBehaviour
                 yield return null;
             }
         }
-       
+
         Scene scene = gameObject.scene;
+        linker.gameEvents.OnMapGenerated();
         sceneLoadingChannel.SetSceneInited(scene.buildIndex);
     }
     void GenerateMapChunk(int chunkX, int chunkY)
@@ -142,7 +169,7 @@ public class MapGenerator : MonoBehaviour
         for (int i = 0; i < tilesCount; i++)
         {
             TilePositions[i] = chunkData.Tiles[i].pos;
-            TilesToSet[i] = mapData.Tiles[chunkData.Tiles[i].tileIndex]; 
+            TilesToSet[i] = mapData.Tiles[chunkData.Tiles[i].tileIndex];
         }
         tilemap.SetTiles(TilePositions, TilesToSet);
     }
@@ -164,8 +191,8 @@ public class MapGenerator : MonoBehaviour
     }
     public static bool GetAbsolutePerlin(int x, int y, float resolution, float scale, float threshold)
     {
-        float xCoord = (x / resolution * scale) + 1000;// + shiftX;
-        float yCoord = (y / resolution * scale) + 1000;// + shiftY;
+        float xCoord = (x / resolution * scale) + 1000;
+        float yCoord = (y / resolution * scale) + 1000;
         float perlin = Mathf.PerlinNoise(xCoord, yCoord);
         return perlin > threshold ? true : false;
     }

@@ -1,24 +1,23 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
+//using UnityEditor;
 using UnityEngine;
 
 public class GameProgressSaver : MonoBehaviour
 {
-    public PlayerManager playerManager;
     public DataManagerSO dataManager;
-    private void Awake()
+    private void Start()
     {
-        EditorApplication.playModeStateChanged += LoadSave;
-
-        playerManager.coinsCount = dataManager.playerData.coinsCount;
-        playerManager.playerName = dataManager.playerData.nickname;
+        
+    }
+    public PlayerData GetData() {
+        return (PlayerData)dataManager.playerData;
     }
     private void OnDisable()
     {
-        EditorApplication.playModeStateChanged -= LoadSave;
+       // EditorApplication.playModeStateChanged -= LoadSave;
     }
-    void LoadSave(PlayModeStateChange change)
+    /*void LoadSave(PlayModeStateChange change)
     {
         if(change == PlayModeStateChange.EnteredPlayMode)
         {
@@ -28,17 +27,18 @@ public class GameProgressSaver : MonoBehaviour
         {
             SaveProgress();
         }
-    }
+    }*/
     public void SaveProgress()
     {
-        DataSaver<PlayerData>.Save(
+        /*DataSaver<PlayerData>.Save(
            (PlayerData)dataManager.playerData, 
-            "player.data");
+            "player.data");*/
     }
     public PlayerData LoadProgress()
     {
-        PlayerData data = DataSaver<PlayerData>.Load("player.data");
-        dataManager.playerData.SetData(data);
-        return data;
+        /* PlayerData data = DataSaver<PlayerData>.Load("player.data");
+         dataManager.playerData.SetData(data);
+         return data;*/
+        return new PlayerData(10, "Player1", 0);
     }
 }

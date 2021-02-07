@@ -10,6 +10,17 @@ public class UIFader : MonoBehaviour
     public UnityAction onUnfadeCompleted;
     public UnityAction onFadeCompleted;
 
+    public GameEventsSO gameEvents;
+    public bool isStartGameFader = false;
+
+    public void OnEnable()
+    {
+        gameEvents.onFadeToMenu += Fade;
+    }
+    public void OnDisable()
+    {
+        gameEvents.onFadeToMenu -= Fade;
+    }
     public void Unfade(float time)
     {
         StartCoroutine(UnfadeCanvasGroup(time));
@@ -33,7 +44,13 @@ public class UIFader : MonoBehaviour
             canvasGroup.alpha = alpha;
             yield return null;
         }
+        canvasGroup.interactable = true;
+        canvasGroup.blocksRaycasts = true;
         onFadeCompleted?.Invoke();
+        if (isStartGameFader)
+        {
+            gameEvents.OnFadedToMenu();
+        }
     }
     IEnumerator UnfadeCanvasGroup(float timeToUnfade)
     {
@@ -53,6 +70,9 @@ public class UIFader : MonoBehaviour
         canvasGroup.interactable = false;
         canvasGroup.blocksRaycasts = false;
         onUnfadeCompleted?.Invoke();
-
+        if (isStartGameFader)
+        {
+            gameEvents.OnUnfadedToPlay();
+        }
     }
 }

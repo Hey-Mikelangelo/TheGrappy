@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: MainMenu
   path: D:\unityProjects\TheGrappy\TheGrappy\TheGrappyProject\Assets\Scenes\Menus\MainMenu.unity
-  buildIndex: 3
+  buildIndex: 0
   needsInitialisation: 0

@@ -48,6 +48,7 @@ public class WallGeneratorSO : ScriptableObject
                 {
                     Vector3Int pos = (currentCellIndexLocal * _wallCellSize)
                         + new Vector3Int(chunkIndexX * mapData.chunkSize, chunkIndexY * mapData.chunkSize, 0);
+
                     Vector3Int gridTilePos = _tilemap.WorldToCell(pos);
                     //Vector2Int[] Cells = CreateCellFromTiles(gridTilePos, _wallCellSize);
                     for (int q = 0; q < _wallCellSize; q++)

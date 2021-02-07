@@ -13,6 +13,9 @@ MonoBehaviour:
   m_Name: SceneAccessHolder
   m_EditorClassIdentifier: 
   sceneList:
+  - name: Game
+    path: D:\unityProjects\TheGrappy\TheGrappy\TheGrappyProject\Assets\Scenes\Game.unity
+    visible: 1
   - name: Initialisation
     path: D:\unityProjects\TheGrappy\TheGrappy\TheGrappyProject\Assets\Scenes\Initialisation.unity
     visible: 1
@@ -26,11 +29,11 @@ MonoBehaviour:
     path: D:\unityProjects\TheGrappy\TheGrappy\TheGrappyProject\Assets\Scenes\New
       Scene.unity
     visible: 1
-  - name: TestGrounds
-    path: D:\unityProjects\TheGrappy\TheGrappy\TheGrappyProject\Assets\Scenes\TestGrounds.unity
-    visible: 1
   - name: FakeScene
     path: D:\unityProjects\TheGrappy\TheGrappy\TheGrappyProject\Assets\Scenes\Menus\FakeScene.unity
+    visible: 1
+  - name: GameMenu
+    path: D:\unityProjects\TheGrappy\TheGrappy\TheGrappyProject\Assets\Scenes\Menus\GameMenu.unity
     visible: 1
   - name: MainMenu
     path: D:\unityProjects\TheGrappy\TheGrappy\TheGrappyProject\Assets\Scenes\Menus\MainMenu.unity

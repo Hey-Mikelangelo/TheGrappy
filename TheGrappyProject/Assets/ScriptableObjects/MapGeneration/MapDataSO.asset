@@ -17,9 +17,9 @@ MonoBehaviour:
   wallGenerator: {fileID: 11400000, guid: d0606c2b2965468438e9e867706af086, type: 2}
   perlinResolution: 3
   perlinScale: 0.3
-  chunkSize: 10
-  chunksLoadingRadius: 5
-  wallPerlinThreshold: 0.0714
+  chunkSize: 20
+  chunksLoadingRadius: 40
+  wallPerlinThreshold: 0.0788
   wallCellScaling: 2
   collectiblesPerlinThreshold: 0.9667
   powerupChance: 0.25

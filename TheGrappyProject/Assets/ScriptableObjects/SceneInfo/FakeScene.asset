@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: FakeScene
   m_EditorClassIdentifier: 
   name: FakeScene
-  path: D:\unityProjects\TheGrappy\TheGrappy\TheGrappyProject\Assets\Scenes\FakeScene.unity
-  buildIndex: 4
+  path: D:\unityProjects\TheGrappy\TheGrappy\TheGrappyProject\Assets\Scenes\Menus\FakeScene.unity
+  buildIndex: -1
   needsInitialisation: 0

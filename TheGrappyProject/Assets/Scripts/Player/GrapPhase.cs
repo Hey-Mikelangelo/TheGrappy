@@ -1,6 +1,7 @@
 using System.Collections;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 [RequireComponent(typeof(LineRenderer))]
 public class GrapPhase : MonoBehaviour
@@ -12,20 +13,24 @@ public class GrapPhase : MonoBehaviour
     private float _rotToAlignTime;
     private float _pullSpeed;
     private float _minOrbitRadius;
-    private float _pullDelay;
 
     private bool _attatched;
     private float _orbitRadius, _distToGrap, _rotAngle, _rotProgress;
     private bool _doPull, _rotateClockwise;
+    private float _pullDelay;
     private Quaternion _newRot, _prevRot;
     private Vector3 _vectorToGrap;
+    private Vector3Int _grapTilePos;
+    private Tilemap _wallTilemap;
     private LineRenderer _lineRenderer;
     private Transform _prevParent;
-    private Vector2 _delta;
+    private Transform _playerTransform;
     private Coroutine _DoPullCoroutine;
-    public void Setup(float speed, float maxRotSpeed, float rotToAlignTime, float pullSpeed,
+    private GameplayManager _gameplayManager;
+    public void Setup(Transform playerTransform, float speed, float maxRotSpeed, float rotToAlignTime, float pullSpeed,
        float minOrbitRadius, float pullDelay)
     {
+        _playerTransform = playerTransform;
         _speed = speed;
         _maxRotSpeed = maxRotSpeed;
         _rotToAlignTime = rotToAlignTime;
@@ -33,27 +38,36 @@ public class GrapPhase : MonoBehaviour
         _minOrbitRadius = minOrbitRadius;
         _pullDelay = pullDelay;
 
-        _prevParent = transform.parent;
+        _prevParent = _playerTransform.parent;
         _lineRenderer = GetComponent<LineRenderer>();
+        grapPoint.gameObject.GetComponent<SpriteRenderer>().enabled = false;
+        _gameplayManager = GetComponent<GameplayManager>();
+        _wallTilemap = _gameplayManager.mapGenerator.wallTilemap;
     }
-    public void Switch(Vector3 grapPointPos)
+    public void Switch(Vector3 grapPointPos, Vector3Int grapTilePos)
     {
-        if (grapPoint.position != grapPointPos)
-        {
-            grapPoint.position = grapPointPos;
-        }
+        grapPoint.position = grapPointPos;
+        _grapTilePos = grapTilePos;
+
         grapPoint.GetComponent<SpriteRenderer>().enabled = true;
-        _orbitRadius = Vector3.Distance(transform.position, grapPoint.position);
-        _DoPullCoroutine = StartCoroutine(CanPull(0.05f));
+        _orbitRadius = Vector3.Distance(_playerTransform.position, grapPoint.position);
+        _DoPullCoroutine = StartCoroutine(CanPull(_pullDelay));
         _attatched = false;
     }
     public void End()
     {
-        _lineRenderer.enabled = false;
+        if (_lineRenderer)
+            _lineRenderer.enabled = false;
+
+        StopPull();
         DetatchFromGrap();
-        grapPoint.GetComponent<SpriteRenderer>().enabled = false;
-        grapPoint.rotation = quaternion.identity;
-        grapPoint.position = transform.position;
+        if (grapPoint != null)
+        {
+            grapPoint.GetComponent<SpriteRenderer>().enabled = false;
+            grapPoint.rotation = quaternion.identity;
+            grapPoint.position = _playerTransform.position;
+        }
+
     }
     public void StopPull()
     {
@@ -65,16 +79,16 @@ public class GrapPhase : MonoBehaviour
 
     }
     public void Run()
-    {
+    { 
         if (_attatched)
         {
             AttatchedMovement();
-            _lineRenderer.SetPosition(0, transform.position);
+            _lineRenderer.SetPosition(0, _playerTransform.position);
             _lineRenderer.SetPosition(1, grapPoint.position);
         }
         else
         {
-            _distToGrap = Vector3.Distance(transform.position, grapPoint.position);
+            _distToGrap = Vector3.Distance(_playerTransform.position, grapPoint.position);
             //this allows orbiting around grap realistically 
             if (_distToGrap > _orbitRadius)
             {
@@ -83,7 +97,7 @@ public class GrapPhase : MonoBehaviour
                 SetRotation();
                 AttatchToGrap();
                 AttatchedMovement();
-                _lineRenderer.SetPosition(0, transform.position);
+                _lineRenderer.SetPosition(0, _playerTransform.position);
                 _lineRenderer.SetPosition(1, grapPoint.position);
                 if (!_lineRenderer.enabled)
                 {
@@ -95,13 +109,13 @@ public class GrapPhase : MonoBehaviour
             {
                 if (_doPull && _orbitRadius > _minOrbitRadius)
                 {
-                    Vector3 vectorToGrap = grapPoint.position - transform.position;
+                    Vector3 vectorToGrap = grapPoint.position - _playerTransform.position;
                     vectorToGrap.Normalize();
-                    transform.position += vectorToGrap * _pullSpeed * Time.deltaTime;
-                    _orbitRadius = Vector3.Distance(transform.position, grapPoint.position);
+                    _playerTransform.position += vectorToGrap * _pullSpeed * Time.deltaTime;
+                    _orbitRadius = Vector3.Distance(_playerTransform.position, grapPoint.position);
                 }
-                transform.position += transform.up * _speed * Time.deltaTime;
-                _lineRenderer.SetPosition(0, transform.position);
+                _playerTransform.position += _playerTransform.up * _speed * Time.deltaTime;
+                _lineRenderer.SetPosition(0, _playerTransform.position);
                 _lineRenderer.SetPosition(1, grapPoint.position);
                 if (!_lineRenderer.enabled)
                 {
@@ -109,56 +123,61 @@ public class GrapPhase : MonoBehaviour
                 }
             }
         }
+        if (!MapGenerator.CheckForTile(_wallTilemap, _wallTilemap.WorldToCell(_grapTilePos)))
+        {
+            _gameplayManager.linker.playerVars.hasGrapPoint = false;
+            _gameplayManager.StartAimPhase();
+        }
     }
     void SmoothRotationToAlignGrap()
     {
-        transform.localRotation = Quaternion.Slerp(_prevRot, _newRot, _rotProgress);
+        _playerTransform.localRotation = Quaternion.Slerp(_prevRot, _newRot, _rotProgress);
         _rotProgress += 1 / _rotToAlignTime * Time.deltaTime;
     }
     void AttatchedMovement()
     {
 
-        if (Quaternion.Angle(transform.localRotation, _newRot) > 0.1f)
+        if (Quaternion.Angle(_playerTransform.localRotation, _newRot) > 0.1f)
         {
             SmoothRotationToAlignGrap();
         }
         float rotSpeed = (_speed / _orbitRadius);
         rotSpeed = math.clamp(rotSpeed, 0, _maxRotSpeed);
         rotSpeed = _rotateClockwise ? -rotSpeed : rotSpeed;
-        grapPoint.Rotate(transform.forward, rotSpeed * Time.deltaTime * Mathf.Rad2Deg, Space.World);
+        grapPoint.Rotate(_playerTransform.forward, rotSpeed * Time.deltaTime * Mathf.Rad2Deg, Space.World);
         if (_doPull && _orbitRadius > _minOrbitRadius)
         {
             //when parent is scaled child's position is also scaled
             Vector2 adjustToGrapScale = new Vector2(1 / grapPoint.localScale.x, 1 / grapPoint.localScale.y);
-            Vector3 dirToCenter = transform.localPosition.normalized;
+            Vector3 dirToCenter = _playerTransform.localPosition.normalized;
             Vector3 newLocalPos = new Vector2(dirToCenter.x * _pullSpeed * adjustToGrapScale.x,
                dirToCenter.y * _pullSpeed * adjustToGrapScale.y);
-            transform.localPosition -= newLocalPos * Time.deltaTime;
-            _distToGrap = Vector3.Distance(transform.position, grapPoint.position);
+            _playerTransform.localPosition -= newLocalPos * Time.deltaTime;
+            _distToGrap = Vector3.Distance(_playerTransform.position, grapPoint.position);
             _orbitRadius = _distToGrap;
         }
     }
     void SetRotation()
     {
         float rotAngle = _rotateClockwise ? _rotAngle + 180 : _rotAngle;
-        _prevRot = transform.rotation;
+        _prevRot = _playerTransform.rotation;
         _newRot = Quaternion.Euler(0, 0, rotAngle);
         _rotProgress = 0;
     }
     void AttatchToGrap()
     {
-        transform.parent = grapPoint;
+        _playerTransform.parent = grapPoint;
     }
     void CatchAngle()
     {
-        _vectorToGrap = transform.position - grapPoint.position;
+        _vectorToGrap = _playerTransform.position - grapPoint.position;
         float angle = Mathf.Atan2(_vectorToGrap.y, _vectorToGrap.x) * Mathf.Rad2Deg;
         _rotAngle = angle - grapPoint.rotation.eulerAngles.z;
     }
     void SetRotDirection()
     {
 
-        if (math.dot(_vectorToGrap, transform.right) > 0)
+        if (math.dot(_vectorToGrap, _playerTransform.right) > 0)
         {
             _rotateClockwise = false;
         }
@@ -169,7 +188,7 @@ public class GrapPhase : MonoBehaviour
     }
     void DetatchFromGrap()
     {
-        transform.parent = _prevParent;
+        _playerTransform.parent = _prevParent;
     }
     IEnumerator CanPull(float time)
     {

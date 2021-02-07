@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework.Constraints;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Events;
@@ -15,8 +16,8 @@ public class CollectibleGeneratorSO : ScriptableObject
     public Tile coinTile; //tile index = 100
     public List<CollectibleTile> Powerups = new List<CollectibleTile>();
     private Tilemap _tilemap;
-   /* public GameObject sideBoostPrefab;
-    public GameObject oneShotPrefab;*/
+    /* public GameObject sideBoostPrefab;
+     public GameObject oneShotPrefab;*/
 
     private int _collectibleCellSize;
     public ChunkData CreateCollectiblesChunk(int x, int y, Tilemap tilemap)
@@ -49,15 +50,16 @@ public class CollectibleGeneratorSO : ScriptableObject
                     //and if in the current scaled cell we do not spawned collectible
                     !CollectiblesPerlinMap[currentCellIndexLocal.x, currentCellIndexLocal.y])
                 {
-                    Vector3Int pos = (currentCellIndexLocal * _collectibleCellSize)
+                    Vector3 pos = (currentCellIndexLocal * _collectibleCellSize)
                         + new Vector3Int(chunkIndexX * mapData.chunkSize, chunkIndexY * mapData.chunkSize, 0);
+                    Vector3Int gridPos = _tilemap.WorldToCell(pos);
                     byte tileIndx = GetTileIndex();
-                    chunkData.Tiles.Add(new ChunkData.tileInfo(pos, tileIndx));
+                    chunkData.Tiles.Add(new ChunkData.tileInfo(gridPos, tileIndx));
                     CollectiblesPerlinMap[currentCellIndexLocal.x, currentCellIndexLocal.y] = true;
                 }
             }
         }
-       
+
         int tilesCount = chunkData.Tiles.Count;
         Vector3Int[] TilePositions = new Vector3Int[tilesCount];
         TileBase[] TilesToSet = new TileBase[tilesCount];
@@ -69,7 +71,6 @@ public class CollectibleGeneratorSO : ScriptableObject
         _tilemap.SetTiles(TilePositions, TilesToSet);
         return chunkData;
     }
-    
     byte GetTileIndex()
     {
         float rand = UnityEngine.Random.Range(0f, 1f);
@@ -86,6 +87,6 @@ public class CollectibleGeneratorSO : ScriptableObject
         //_tilemap.SetTile(gridPos, collectibleTile);
         return mapData.GetTileIndex(collectibleTile);
     }
-    
-    
+
+
 }

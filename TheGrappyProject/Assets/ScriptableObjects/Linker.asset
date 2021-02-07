@@ -13,3 +13,11 @@ MonoBehaviour:
   m_Name: Linker
   m_EditorClassIdentifier: 
   inputProxy: {fileID: 11400000, guid: 103cb6ada02b55749b129ae68e1a6ce7, type: 2}
+  playerDeath: {fileID: 0}
+  gameEvents: {fileID: 11400000, guid: c8267ebac73fee446831403ce8162e4d, type: 2}
+  playerData: {fileID: 11400000, guid: 87da988acb9c2214d8650eced707ee99, type: 2}
+  playerVars: {fileID: 11400000, guid: 6a6021d7b5f96a14c8d481b6ba16408e, type: 2}
+  playerCollisionChannel: {fileID: 11400000, guid: dbb7cca3b3be3fa49b76a9cc9fe8e550,
+    type: 2}
+  mapData: {fileID: 11400000, guid: 2598dc7976e370246a3030d496b059c5, type: 2}
+  dataManager: {fileID: 11400000, guid: e4908fd1bad59de44a7672802b5e9aba, type: 2}
