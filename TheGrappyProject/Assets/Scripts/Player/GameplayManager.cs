@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public enum PlayerPhase
 {
@@ -6,7 +8,7 @@ public enum PlayerPhase
     grap
 }
 
-[RequireComponent(typeof(AimPhase), typeof(GrapPhase))]
+[RequireComponent(typeof(AimPhase), typeof(GrapPhase), typeof(GameProgressSaver))]
 public class GameplayManager : MonoBehaviour
 {
     public LinkerSO linker;
@@ -30,6 +32,7 @@ public class GameplayManager : MonoBehaviour
     public GameObject player;
     private AimPhase _aimPhase;
     private GrapPhase _grapPhase;
+    private GameProgressSaver _progressSaver;
     private Vector2 _aimDelta;
     private Vector2Int _prevPlayerChunk;
     private Vector3 _startPos;
@@ -69,8 +72,8 @@ public class GameplayManager : MonoBehaviour
         switch (linker.playerVars.currentPhase)
         {
             case PlayerPhase.aim:
-                _aimPhase.Run(_aimDelta, 
-                    out linker.playerVars.grapPos, 
+                _aimPhase.Run(_aimDelta,
+                    out linker.playerVars.grapPos,
                     out linker.playerVars.grapTilePos);
                 break;
             case PlayerPhase.grap:
@@ -86,15 +89,17 @@ public class GameplayManager : MonoBehaviour
     private void OnDisable()
     {
         UnsubsribeEvents();
+        SavePlayerData();
     }
     Vector2Int GetCurrentChunk()
     {
         return mapGenerator.mapData.WorldToChunk(player.transform.position);
     }
-    void LinkPhases()
+    void LinkScripts()
     {
         _aimPhase = GetComponent<AimPhase>();
         _grapPhase = GetComponent<GrapPhase>();
+        _progressSaver = GetComponent<GameProgressSaver>();
     }
     void SetupInitial()
     {
@@ -102,7 +107,7 @@ public class GameplayManager : MonoBehaviour
         {
             player = gameObject;
         }
-        LinkPhases();
+        LinkScripts();
         SetupAimPhase();
         SetupGrapPhase();
         SubsribeEvents();
@@ -135,7 +140,7 @@ public class GameplayManager : MonoBehaviour
             }
         }
         linker.playerVars.isMapGenerated = true;
-        
+
     }
     public void StartAimPhase()
     {
@@ -158,6 +163,14 @@ public class GameplayManager : MonoBehaviour
     {
         _grapPhase.Setup(player.transform, speed, maxRotSpeed, rotToAlignTime, pullSpeed, minOrbitRadius, pullDelay);
     }
+    void LoadPlayerData()
+    {
+        _progressSaver.LoadProgress();
+    }
+    void SavePlayerData()
+    {
+        _progressSaver.SaveProgress();
+    }
     void SubsribeEvents()
     {
         linker.inputProxy.aimEvent += OnAim;
@@ -168,6 +181,7 @@ public class GameplayManager : MonoBehaviour
         linker.playerCollisionChannel.collision2DEvent += OnPlayerCollision;
         linker.gameEvents.onUnfadedToPlay += StartGame;
         linker.gameEvents.onMapGenerated += OnMapgenerated;
+        Application.quitting += SavePlayerData;
     }
 
     void UnsubsribeEvents()
@@ -180,10 +194,12 @@ public class GameplayManager : MonoBehaviour
         linker.playerCollisionChannel.collision2DEvent -= OnPlayerCollision;
         linker.gameEvents.onUnfadedToPlay -= StartGame;
         linker.gameEvents.onMapGenerated -= OnMapgenerated;
+        Application.quitting -= SavePlayerData;
 
     }
     void StartGame()
     {
+        LoadPlayerData();
         if (!linker.playerVars.isMapGenerated)
         {
             linker.playerVars.isWaitingForMapGenerated = true;
@@ -193,30 +209,46 @@ public class GameplayManager : MonoBehaviour
     }
     void Die()
     {
+        float time = 0.5f;
+        linker.gameEvents.OnFadeToMenu(time);
+        SavePlayerData();
+        StartCoroutine(ResetPlayer(time));
+        linker.playerVars.isMoving = false;
+    }
+    IEnumerator ResetPlayer(float time)
+    {
+        yield return new WaitForSeconds(time);
         player.transform.position = _startPos;
         player.transform.rotation = Quaternion.identity;
-        linker.playerVars.isMoving = false;
         linker.playerVars.hasGrapPoint = false;
-        linker.gameEvents.OnFadeToMenu(0.5f);
+        linker.playerVars.isMapGenerated = false;
         StartAimPhase();
         mapGenerator.UpdateChunks(GetCurrentChunk());
     }
     void OnPlayerCollision(GameObject player, Collision2D collision)
     {
+        Vector3 tileWorldPos = collision.GetContact(0).point - (collision.GetContact(0).normal * 0.5f);
+        Vector3Int tilePos = mapGenerator.collectiblesTilemap.WorldToCell(tileWorldPos);
         if (collision.gameObject.layer != 9)
         {
-            Die();
+            if (linker.playerVars.isDestroyer)
+            {
+                mapGenerator.DestroyWallPiece(tilePos, 2);
+            }   
+            else
+            {
+                Die();
+            }
         }
         else
         {
-            Vector3Int tilePos = mapGenerator.collectiblesTilemap.WorldToCell(collision.GetContact(0).point);
+            
             CollectibleTile tile = mapGenerator.collectiblesTilemap.GetTile(
                 tilePos) as CollectibleTile;
             mapGenerator.ChunksCollectiblesRemovedTiles[GetCurrentChunk()].Add(tilePos);
 
             if (tile == null)
             {
-                //Debug.Log("no tile: " + tilePos);
                 return;
             }
             Collectible collectible = tile.type;
@@ -224,19 +256,16 @@ public class GameplayManager : MonoBehaviour
             {
                 case Collectible.coin:
                     linker.dataManager.playerData.coinsCount += 1;
-                    //coinsCountDisplay.text = "Coins: " + linker.dataManager.playerData.coinsCount;
                     break;
                 case Collectible.oneShot:
                     linker.playerVars.currentAbility = Ability.oneShot;
                     linker.playerVars.oneShot.Add();
                     linker.gameEvents.OnChangedAbility(Ability.oneShot);
-                    //abilityButton.color = oneShotColor;
                     break;
                 case Collectible.sideBoost:
                     linker.playerVars.currentAbility = Ability.sideBoost;
                     linker.playerVars.sideBoost.Add();
                     linker.gameEvents.OnChangedAbility(Ability.sideBoost);
-                    //abilityButton.color = sideBoostColor;
                     break;
 
             }
@@ -281,7 +310,7 @@ public class GameplayManager : MonoBehaviour
                 break;
             case Ability.sideBoost:
                 sideBoostScript.ResetSideBoost();
-                sideBoostScript.SetSideBoost(0.3f, 50, (_aimDelta.x > 0 ? true : false));
+                sideBoostScript.SetSideBoost(0.3f, 50, (_aimDelta.x > 0 ? true : false), linker.playerVars);
                 linker.playerVars.sideBoost.Use();
                 /*abilityButton.color = inactiveColor;
                 _doSideBoost = true;
@@ -293,10 +322,11 @@ public class GameplayManager : MonoBehaviour
     void OnAbilityEnd()
     {
         //_doSideBoost = false;
-        if(linker.playerVars.currentAbility == Ability.sideBoost)
+        if (linker.playerVars.currentAbility == Ability.sideBoost)
         {
             linker.playerVars.sideBoost.SetUsed();
         }
+        linker.playerVars.isDestroyer = false;
         SetAbilityNoneIfNoLeft();
 
     }

@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -236,7 +236,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 205898975}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 519.5831, y: 974.54675, z: -107.08324}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1963160114}
@@ -370,7 +370,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
   m_AnchoredPosition: {x: 0, y: 123.79004}
-  m_SizeDelta: {x: 226.39355, y: 226.39355}
+  m_SizeDelta: {x: 118.77069, y: 118.77069}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &665141876
 MonoBehaviour:
@@ -653,6 +653,7 @@ GameObject:
   - component: {fileID: 1019121973}
   - component: {fileID: 1019121975}
   - component: {fileID: 1019121974}
+  - component: {fileID: 1019121976}
   m_Layer: 5
   m_Name: Stats
   m_TagString: Untagged
@@ -717,6 +718,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1019121972}
   m_CullTransparentMesh: 0
+--- !u!114 &1019121976
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1019121972}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69bc763ac3310a94fb03123c7d46827d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerData: {fileID: 11400000, guid: 87da988acb9c2214d8650eced707ee99, type: 2}
+  coinsText: {fileID: 1165849472}
 --- !u!1 &1084736116
 GameObject:
   m_ObjectHideFlags: 0

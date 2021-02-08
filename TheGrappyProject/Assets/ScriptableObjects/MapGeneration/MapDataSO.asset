@@ -19,7 +19,7 @@ MonoBehaviour:
   perlinScale: 0.3
   chunkSize: 20
   chunksLoadingRadius: 40
-  wallPerlinThreshold: 0.0788
+  wallPerlinThreshold: 0.0731
   wallCellScaling: 2
   collectiblesPerlinThreshold: 0.9667
   powerupChance: 0.25

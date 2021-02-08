@@ -89,7 +89,14 @@ public class AimPhase : MonoBehaviour
 
         Quaternion newRot = Quaternion.Euler(0, 0, angleToHit);
         Quaternion prevRot = Quaternion.Euler(0, 0, _aimAngle);
-        aimArrowHolder.rotation = Quaternion.RotateTowards(aimArrowHolder.rotation, newRot, 20);
+        if(Mathf.Abs(Quaternion.Angle(aimArrowHolder.rotation, newRot)) > 10)
+        {
+            aimArrowHolder.rotation = Quaternion.RotateTowards(aimArrowHolder.rotation, newRot, 20);
+        }
+        else
+        {
+            aimArrowHolder.rotation = Quaternion.RotateTowards(aimArrowHolder.rotation, newRot, 0.5f);
+        }
       
     }
    
@@ -114,8 +121,7 @@ public class AimPhase : MonoBehaviour
 
         //change grap posiotion only if found new target
         if (hitCount != 0)
-        {
-            Debug.Log("Set grapPos");
+        { 
             
             _grapPos = hit[0].point;
             Vector3 grapTileWorldPos = _grapPos - new Vector3(hit[0].normal.x, hit[0].normal.y, 0);
@@ -127,7 +133,6 @@ public class AimPhase : MonoBehaviour
         }
         if (MapGenerator.CheckForTile(_wallTilemap, _grapTilePos))
         {
-            Debug.Log("Check for tile");
             _gameplayManager.linker.playerVars.hasGrapPoint = true;
             aimPoint.GetComponent<SpriteRenderer>().enabled = true;
         }

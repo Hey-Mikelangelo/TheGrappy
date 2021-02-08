@@ -1,11 +1,22 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Data;
+using System.Globalization;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 //using UnityEditor;
 using UnityEngine;
 
 public class GameProgressSaver : MonoBehaviour
 {
     public DataManagerSO dataManager;
+    public string saveFileName = "player.data";
+
+    private void Awake()
+    {
+        /*string savePath = DataSaver<int>.InitSaveFolder();
+        File.Create(savePath + saveFileName);*/
+    }
     private void Start()
     {
         
@@ -17,28 +28,15 @@ public class GameProgressSaver : MonoBehaviour
     {
        // EditorApplication.playModeStateChanged -= LoadSave;
     }
-    /*void LoadSave(PlayModeStateChange change)
-    {
-        if(change == PlayModeStateChange.EnteredPlayMode)
-        {
-            LoadProgress();
-        }
-        else if(change == PlayModeStateChange.ExitingPlayMode)
-        {
-            SaveProgress();
-        }
-    }*/
+   
     public void SaveProgress()
     {
-        /*DataSaver<PlayerData>.Save(
-           (PlayerData)dataManager.playerData, 
-            "player.data");*/
+        SerializationManager.Save(saveFileName, (PlayerData)dataManager.playerData);
+
     }
-    public PlayerData LoadProgress()
+    public void LoadProgress()
     {
-        /* PlayerData data = DataSaver<PlayerData>.Load("player.data");
-         dataManager.playerData.SetData(data);
-         return data;*/
-        return new PlayerData(10, "Player1", 0);
+        dataManager.playerData.SetData((PlayerData)SerializationManager.Load(saveFileName));
+      
     }
 }

@@ -12,18 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3edb820766b00af4c9b86bd30ed9c88d, type: 3}
   m_Name: PlayerVarsSO
   m_EditorClassIdentifier: 
-  isMoving: 1
-  isMapGenerated: 1
+  isMoving: 0
+  isMapGenerated: 0
   isWaitingForMapGenerated: 0
+  isDestroyer: 0
+  hasGrapPoint: 0
   coinsCount: 0
   playerName: 
-  currentChunk: {x: -3, y: 9}
-  speed: 1
-  grapLength: 20
+  currentChunk: {x: 0, y: 0}
   currentPhase: 0
-  grapPos: {x: -63.997505, y: 196.95187, z: 0}
-  grapTilePos: {x: -65, y: 196, z: 0}
-  hasGrapPoint: 1
+  currentAbility: 1
+  speed: 7
+  grapLength: 20
+  grapPos: {x: 9.997499, y: 311.73654, z: 0}
+  grapTilePos: {x: 10, y: 311, z: 0}
   aimWorldRotation: {x: 0, y: 0, z: 0, w: 0}
   rotataionToGrapPoint: {x: 0, y: 0, z: 0, w: 0}
-  currentAbility: 1

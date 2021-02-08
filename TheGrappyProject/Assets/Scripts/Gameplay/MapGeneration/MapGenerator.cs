@@ -44,6 +44,55 @@ public class MapGenerator : MonoBehaviour
             }
         }
     }
+    public void DestroyWallPiece(Vector3Int tilePos, int tilesPerFrame)
+    {
+        StartCoroutine(DestroyWall(wallTilemap, tilePos, tilesPerFrame));
+    }
+    IEnumerator DestroyWall(Tilemap tilemap, Vector3Int tilePos, int tilesPerFrame)
+    {
+        List<Vector3Int> TilePositions = new List<Vector3Int>(10);
+
+        Vector3Int currentTile = tilePos;
+        TilePositions.Add(tilePos);
+        int lastTileIndx = 0;
+        int tilesCounter = 0;
+        CheckAdjecent(tilemap, currentTile, TilePositions);
+        while (TilePositions.Count - 1 > lastTileIndx)
+        {
+            lastTileIndx++;
+            CheckAdjecent(tilemap, TilePositions[lastTileIndx], TilePositions);
+        }
+        for (int i = 0; i < TilePositions.Count; i++)
+        {
+            tilemap.SetTile(TilePositions[i], null);
+            tilesCounter++;
+            if(tilesCounter >= tilesPerFrame)
+            {
+                tilesCounter = 0;
+                yield return null;
+            }
+        }
+    }
+    void CheckAdjecent(Tilemap tilemap, Vector3Int tilePos, List<Vector3Int> TilePositions)
+    {
+        Vector3Int[] deltaSide = new Vector3Int[] {
+            new Vector3Int(1, 0, 0),
+            new Vector3Int(0, 1, 0),
+            new Vector3Int(-1, 0, 0),
+            new Vector3Int(0, -1, 0),
+        };
+        for (int i = 0; i < 4; i++)
+        {
+            Vector3Int pos = tilePos + deltaSide[i];
+            if (MapGenerator.CheckForTile(tilemap, pos))
+            {
+                if (!TilePositions.Contains(pos))
+                {
+                    TilePositions.Add(pos);
+                }
+            }
+        }
+    }
     public static bool CheckForTile(Tilemap tilemap, Vector3Int tilePos)
     {
         return tilemap.GetTile(tilePos) == null ? false : true;

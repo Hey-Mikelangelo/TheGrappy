@@ -9,23 +9,33 @@ public static class DataSaver<T> where T : struct
 {
     static BinaryFormatter binaryFormatter = new BinaryFormatter();
     static FileStream fileStream;
-
-    static void SetDefaultPath(out string path)
+    public static string InitSaveFolder()
     {
-        path = Application.persistentDataPath + "/Saves/";
+        string path = GetDefaultPath();
+        if (!Directory.Exists(path))
+        {
+            Directory.CreateDirectory(path);
+        }
+        return path;
+    }
+
+    public static string GetDefaultPath()
+    {
+        return Application.persistentDataPath + "/Saves/";
     }
     public static void Save(T structToSave, string fileName, string path = null)
     {
-        if(path == null)
+        if (path == null)
         {
-            SetDefaultPath(out path);
+            path = GetDefaultPath();
         }
         string pathToFile = path + fileName;
         if (!File.Exists(pathToFile))
         {
             File.Create(pathToFile);
         }
-        fileStream = new FileStream(pathToFile, FileMode.Open, FileAccess.Write);
+        fileStream = new FileStream(pathToFile, FileMode.Create);
+
         binaryFormatter.Serialize(fileStream, structToSave);
         fileStream.Close();
     }
@@ -33,12 +43,20 @@ public static class DataSaver<T> where T : struct
     {
         if (path == null)
         {
-            SetDefaultPath(out path);
+            path = GetDefaultPath();
         }
-        if (File.Exists(path+fileName))
+        if (File.Exists(path + fileName))
         {
-            fileStream = new FileStream(path + fileName, FileMode.Open, FileAccess.Read);
-            T data = (T)binaryFormatter.Deserialize(fileStream);
+            T data;
+            fileStream = new FileStream(path + fileName, FileMode.Open);
+            if (fileStream.Length > 0)
+            {
+                data = (T)binaryFormatter.Deserialize(fileStream);
+            }
+            else
+            {
+                data = new T();
+            }
             fileStream.Close();
             return data;
         }
@@ -47,6 +65,6 @@ public static class DataSaver<T> where T : struct
             Debug.LogError("No file: " + path + fileName);
             return default;
         }
-       
+
     }
 }

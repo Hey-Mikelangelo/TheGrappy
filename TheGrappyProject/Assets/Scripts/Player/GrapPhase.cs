@@ -153,9 +153,9 @@ public class GrapPhase : MonoBehaviour
             Vector3 newLocalPos = new Vector2(dirToCenter.x * _pullSpeed * adjustToGrapScale.x,
                dirToCenter.y * _pullSpeed * adjustToGrapScale.y);
             _playerTransform.localPosition -= newLocalPos * Time.deltaTime;
-            _distToGrap = Vector3.Distance(_playerTransform.position, grapPoint.position);
-            _orbitRadius = _distToGrap;
         }
+        _distToGrap = Vector3.Distance(_playerTransform.position, grapPoint.position);
+        _orbitRadius = _distToGrap;
     }
     void SetRotation()
     {
