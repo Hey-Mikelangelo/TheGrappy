@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using NUnit.Framework.Constraints;
+using System.Collections;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -182,8 +184,9 @@ public class GameplayManager : MonoBehaviour
         linker.gameEvents.onUnfadedToPlay += StartGame;
         linker.gameEvents.onMapGenerated += OnMapgenerated;
         Application.quitting += SavePlayerData;
+        linker.gameEvents.onSetIsDestroyerFalse += SetIsDestroyerFalseDelayed;
     }
-
+    
     void UnsubsribeEvents()
     {
         linker.inputProxy.aimEvent -= OnAim;
@@ -195,6 +198,7 @@ public class GameplayManager : MonoBehaviour
         linker.gameEvents.onUnfadedToPlay -= StartGame;
         linker.gameEvents.onMapGenerated -= OnMapgenerated;
         Application.quitting -= SavePlayerData;
+        linker.gameEvents.onSetIsDestroyerFalse -= SetIsDestroyerFalseDelayed;
 
     }
     void StartGame()
@@ -215,6 +219,22 @@ public class GameplayManager : MonoBehaviour
         StartCoroutine(ResetPlayer(time));
         linker.playerVars.isMoving = false;
     }
+
+    Coroutine SetIsDestroyerFalseCoroutine;
+    void SetIsDestroyerFalseDelayed()
+    {
+        if (SetIsDestroyerFalseCoroutine != null)
+        {
+            StopCoroutine(SetIsDestroyerFalseCoroutine);
+        }
+        SetIsDestroyerFalseCoroutine = StartCoroutine(SetDestroyerFalse(1));
+    }
+    IEnumerator SetDestroyerFalse(float time)
+    {
+        yield return new WaitForSeconds(time);
+        linker.playerVars.isDestroyer = false;
+    }
+
     IEnumerator ResetPlayer(float time)
     {
         yield return new WaitForSeconds(time);
@@ -310,7 +330,7 @@ public class GameplayManager : MonoBehaviour
                 break;
             case Ability.sideBoost:
                 sideBoostScript.ResetSideBoost();
-                sideBoostScript.SetSideBoost(0.3f, 50, (_aimDelta.x > 0 ? true : false), linker.playerVars);
+                sideBoostScript.SetSideBoost(0.3f, 50, (_aimDelta.x > 0 ? true : false));
                 linker.playerVars.sideBoost.Use();
                 /*abilityButton.color = inactiveColor;
                 _doSideBoost = true;
@@ -326,10 +346,15 @@ public class GameplayManager : MonoBehaviour
         {
             linker.playerVars.sideBoost.SetUsed();
         }
-        linker.playerVars.isDestroyer = false;
+        SetIsDestroyerFalseDelayed();
         SetAbilityNoneIfNoLeft();
 
     }
+    /*public static IEnumerator StopBeDestroyer(float time)
+    {
+        yield return WaitForSeconds()
+    }*/
+    
     void SetAbilityNoneIfNoLeft()
     {
         AbilityAccess abilityAccess = linker.playerVars.GetCurrentAbilityAcccess();

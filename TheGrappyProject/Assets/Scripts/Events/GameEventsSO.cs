@@ -16,6 +16,7 @@ public class GameEventsSO : ScriptableObject
     public event UnityAction onMapLoaded;
     public event UnityAction<Ability> onChangedAbility;
     public event UnityAction onMapGenerated;
+    public event UnityAction onSetIsDestroyerFalse;
     public void OnPressPlay()
     {
         onPressPlay?.Invoke();
@@ -51,5 +52,9 @@ public class GameEventsSO : ScriptableObject
     public void OnMapGenerated()
     {
         onMapGenerated?.Invoke();
+    }
+    public void OnSetIsDestroyerFalseDelayed()
+    {
+        onSetIsDestroyerFalse?.Invoke();
     }
 }

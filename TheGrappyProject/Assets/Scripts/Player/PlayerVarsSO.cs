@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 
 [CreateAssetMenu(fileName = "PlayerVarsSO", menuName = "Game/PlayerVarsSO")]
@@ -36,5 +37,27 @@ public class PlayerVarsSO : ScriptableObject
             default:
                 return null;
         }
+    }
+
+    private Coroutine _SetIsDestroyerFalseCoroutine;
+    /*public void SetIsDestroyer(bool isDestr, MonoBehaviour coroutineCaller)
+    {
+        if (isDestr)
+        {
+            isDestroyer = true;
+            if(_SetIsDestroyerFalseCoroutine != null)
+                coroutineCaller.StopCoroutine(_SetIsDestroyerFalseCoroutine);
+        }
+        else
+        {
+            if (_SetIsDestroyerFalseCoroutine != null)
+                coroutineCaller.StopCoroutine(_SetIsDestroyerFalseCoroutine);
+            _SetIsDestroyerFalseCoroutine = coroutineCaller.StartCoroutine(StopBeDestroyer(1));
+        }
+    }*/
+    IEnumerator StopBeDestroyer(float time)
+    {
+        yield return new WaitForSeconds(time);
+        isDestroyer = false;
     }
 }

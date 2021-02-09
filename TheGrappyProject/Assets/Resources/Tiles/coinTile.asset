@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d02b7395f6356f4b9a50dc81ace6a7a, type: 3}
   m_Name: coinTile
   m_EditorClassIdentifier: 
-  m_Sprite: {fileID: 21300000, guid: 7e4804a2533b25040b32923d948a5d5c, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 1c0ea68ae29c941408aad325ea9ee563, type: 3}
   m_Color: {r: 0.5, g: 0.4588887, b: 0.028301895, a: 1}
   m_Transform:
     e00: 1

@@ -10,13 +10,19 @@ public class SideBoost : MonoBehaviour
     float _force;
     float timeElapsed = 0;
     Coroutine boostCoroutine;
+    public LinkerSO linker;
     PlayerVarsSO _playerVars;
-    public void SetSideBoost(float maxTime, float force, bool toRight, PlayerVarsSO playerVars)
+    GameEventsSO _gameEvents;
+    private void Awake()
+    {
+        _playerVars = linker.playerVars;
+        _gameEvents = linker.gameEvents;
+    }
+    public void SetSideBoost(float maxTime, float force, bool toRight)
     {
         _maxBoostTime = maxTime;
         _force = force;
         _toRight = toRight;
-        _playerVars = playerVars;
     }
     public void ResetSideBoost()
     {
@@ -38,7 +44,7 @@ public class SideBoost : MonoBehaviour
         }
         else
         {
-            _playerVars.isDestroyer = false;
+            _gameEvents.OnSetIsDestroyerFalseDelayed();
             return Vector3.zero;
         }
     }

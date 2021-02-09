@@ -89,14 +89,20 @@ public class AimPhase : MonoBehaviour
 
         Quaternion newRot = Quaternion.Euler(0, 0, angleToHit);
         Quaternion prevRot = Quaternion.Euler(0, 0, _aimAngle);
-        if(Mathf.Abs(Quaternion.Angle(aimArrowHolder.rotation, newRot)) > 10)
+        float angleDelta = Mathf.Abs(Quaternion.Angle(aimArrowHolder.rotation, newRot));
+        aimArrowHolder.rotation = Quaternion.RotateTowards(aimArrowHolder.rotation, newRot, angleDelta / 5);
+
+        /*if (angleDelta > 20)
         {
-            aimArrowHolder.rotation = Quaternion.RotateTowards(aimArrowHolder.rotation, newRot, 20);
+        }
+        if (angleDelta > 10)
+        {
+            aimArrowHolder.rotation = Quaternion.RotateTowards(aimArrowHolder.rotation, newRot, 10);
         }
         else
         {
             aimArrowHolder.rotation = Quaternion.RotateTowards(aimArrowHolder.rotation, newRot, 0.5f);
-        }
+        }*/
       
     }
    
