@@ -8,12 +8,14 @@ using UnityEngine;
 public class PlayerDataSO : ScriptableObject
 {
     public int coinsCount;
+    public int lastScore;
+    public int highScore;
     public string nickname;
     public int playerId; 
     public List<int> AchievementIds;
     public List<int> SkinsOpenedIds;
 
-    public void SetData(PlayerData data)
+    /*public void SetData(PlayerData data)
     {
         coinsCount = data.coinsCount;
         nickname = data.nickname;
@@ -32,6 +34,6 @@ public class PlayerDataSO : ScriptableObject
             AchievementIds = data.AchievementIds,
             SkinsOpenedIds = data.SkinsOpenedIds
         };
-    }
+    }*/
     
 }

@@ -4,6 +4,7 @@ using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using UnityEditor.SceneManagement;
 //using UnityEditor;
 using UnityEngine;
 
@@ -11,19 +12,28 @@ public class GameProgressSaver : MonoBehaviour
 {
     public DataManagerSO dataManager;
     public string saveFileName = "player.data";
+    private string coins = "coins";
+    private string highScore = "highScore";
+    private string playerName = "playerName";
 
     private void Awake()
     {
-        /*string savePath = DataSaver<int>.InitSaveFolder();
-        File.Create(savePath + saveFileName);*/
+        /*if (!Directory.Exists(SerializationManager.GetSavePath()))
+        {
+            Directory.CreateDirectory(SerializationManager.GetSavePath());
+        }
+        string path = SerializationManager.GetDefaultFilePath(saveFileName);
+
+        if (File.Exists(path))
+        {
+            SerializationManager.Save(saveFileName, (PlayerData)dataManager.playerData);
+        }*/
     }
     private void Start()
     {
-        
+
     }
-    public PlayerData GetData() {
-        return (PlayerData)dataManager.playerData;
-    }
+
     private void OnDisable()
     {
        // EditorApplication.playModeStateChanged -= LoadSave;
@@ -31,12 +41,17 @@ public class GameProgressSaver : MonoBehaviour
    
     public void SaveProgress()
     {
-        SerializationManager.Save(saveFileName, (PlayerData)dataManager.playerData);
-
+        //SerializationManager.Save(saveFileName, (PlayerData)dataManager.playerData);
+        PlayerPrefs.SetInt(coins, dataManager.playerData.coinsCount);
+        PlayerPrefs.SetString(playerName, dataManager.playerData.nickname);
+        PlayerPrefs.SetInt(highScore, dataManager.playerData.highScore);
     }
     public void LoadProgress()
     {
-        dataManager.playerData.SetData((PlayerData)SerializationManager.Load(saveFileName));
-      
+        dataManager.playerData.coinsCount = PlayerPrefs.GetInt(coins, 0);
+        dataManager.playerData.nickname = PlayerPrefs.GetString(playerName, "player");
+        dataManager.playerData.highScore = PlayerPrefs.GetInt(highScore, 0);
+        // dataManager.playerData.SetData((PlayerData)SerializationManager.Load(saveFileName));
+
     }
 }

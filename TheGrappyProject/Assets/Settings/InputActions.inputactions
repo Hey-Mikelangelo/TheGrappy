@@ -7,7 +7,7 @@
             "actions": [
                 {
                     "name": "Aim",
-                    "type": "PassThrough",
+                    "type": "Value",
                     "id": "7f6b1e46-6a8c-4349-a37a-dd83516ffabb",
                     "expectedControlType": "Vector2",
                     "processors": "",

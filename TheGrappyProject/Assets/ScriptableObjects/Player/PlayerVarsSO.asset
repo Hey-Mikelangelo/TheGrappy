@@ -21,10 +21,10 @@ MonoBehaviour:
   playerName: 
   currentChunk: {x: 0, y: 0}
   currentPhase: 0
-  currentAbility: 2
+  currentAbility: 0
   speed: 7
   grapLength: 20
-  grapPos: {x: 11.997499, y: 35.474224, z: 0}
-  grapTilePos: {x: 12, y: 35, z: 0}
+  grapPos: {x: 14.16668, y: 40.156906, z: 0}
+  grapTilePos: {x: 14, y: 41, z: 0}
   aimWorldRotation: {x: 0, y: 0, z: 0, w: 0}
   rotataionToGrapPoint: {x: 0, y: 0, z: 0, w: 0}

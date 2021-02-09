@@ -10,6 +10,11 @@ public class SerializationManager
     {
         return Application.persistentDataPath + "/saves/";
     }
+    public static string GetDefaultFilePath(string fileName)
+    {
+        string path = GetSavePath() + fileName + ".save";
+        return path;
+    }
     public static bool Save(string saveName, object saveData, string pathFromSaveFolder = null)
     {
         BinaryFormatter binaryFormatter = new BinaryFormatter();

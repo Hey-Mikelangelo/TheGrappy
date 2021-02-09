@@ -20,6 +20,7 @@ public class GameplayManager : MonoBehaviour
     [Header("Aim phase variables")]
     public float speed = 7;
     public float grapLength = 30;
+    public int clearAreaRadius = 15;
     public LayerMask grapPointsMask;
 
     [Header("Grap phase variables")]
@@ -38,7 +39,7 @@ public class GameplayManager : MonoBehaviour
     private Vector2 _aimDelta;
     private Vector2Int _prevPlayerChunk;
     private Vector3 _startPos;
-
+    private float timeSurvived = 0;
     private void Update()
     {
         linker.playerVars.currentChunk = GetCurrentChunk();
@@ -51,6 +52,9 @@ public class GameplayManager : MonoBehaviour
         {
             return;
         }
+
+        timeSurvived += Time.deltaTime;
+        linker.playerData.lastScore = Mathf.FloorToInt(timeSurvived*10);
 
         switch (linker.playerVars.currentAbility)
         {
@@ -87,6 +91,14 @@ public class GameplayManager : MonoBehaviour
     private void Start()
     {
         SetupInitial();
+
+    }
+    private void OnEnable()
+    {
+        LinkScripts();
+
+        LoadPlayerData();
+
     }
     private void OnDisable()
     {
@@ -109,7 +121,6 @@ public class GameplayManager : MonoBehaviour
         {
             player = gameObject;
         }
-        LinkScripts();
         SetupAimPhase();
         SetupGrapPhase();
         SubsribeEvents();
@@ -121,6 +132,9 @@ public class GameplayManager : MonoBehaviour
         linker.playerVars.isMoving = false;
         linker.playerVars.isMapGenerated = false;
 
+        linker.playerData.lastScore = 0;
+        timeSurvived = 0;
+
         linker.playerVars.currentChunk = GetCurrentChunk();
         _prevPlayerChunk = linker.playerVars.currentChunk;
 
@@ -131,8 +145,9 @@ public class GameplayManager : MonoBehaviour
     {
         if (!linker.playerVars.isMoving)
         {
-            Vector3 bottomLeft = player.transform.position + new Vector3(-20f, -20f, 0);
-            Vector3 topRight = player.transform.position + new Vector3(20f, 20f, 0);
+            
+            Vector3 bottomLeft = player.transform.position + new Vector3(-clearAreaRadius, -clearAreaRadius, 0);
+            Vector3 topRight = player.transform.position + new Vector3(clearAreaRadius, clearAreaRadius, 0);
             mapGenerator.ClearAreaBox(bottomLeft, topRight);
             if (linker.playerVars.isWaitingForMapGenerated)
             {
@@ -176,6 +191,7 @@ public class GameplayManager : MonoBehaviour
     void SubsribeEvents()
     {
         linker.inputProxy.aimEvent += OnAim;
+        linker.inputProxy.aimEndEvent += OnAimEnd;
         linker.inputProxy.actionStartEvent += OnActionStart;
         linker.inputProxy.actionEndEvent += OnActionEnd;
         linker.inputProxy.abilityStartEvent += OnAbilityStart;
@@ -190,6 +206,7 @@ public class GameplayManager : MonoBehaviour
     void UnsubsribeEvents()
     {
         linker.inputProxy.aimEvent -= OnAim;
+        linker.inputProxy.aimEndEvent -= OnAimEnd;
         linker.inputProxy.actionStartEvent -= OnActionStart;
         linker.inputProxy.actionEndEvent -= OnActionEnd;
         linker.inputProxy.abilityStartEvent -= OnAbilityStart;
@@ -203,7 +220,6 @@ public class GameplayManager : MonoBehaviour
     }
     void StartGame()
     {
-        LoadPlayerData();
         if (!linker.playerVars.isMapGenerated)
         {
             linker.playerVars.isWaitingForMapGenerated = true;
@@ -215,9 +231,17 @@ public class GameplayManager : MonoBehaviour
     {
         float time = 0.5f;
         linker.gameEvents.OnFadeToMenu(time);
+        if(linker.playerData.lastScore > linker.playerData.highScore)
+        {
+            linker.playerData.highScore = linker.playerData.lastScore;
+        }
+        timeSurvived = 0;
         SavePlayerData();
+        linker.playerData.lastScore = 0;
+
         StartCoroutine(ResetPlayer(time));
         linker.playerVars.isMoving = false;
+        linker.gameEvents.OnPlayerDeath();
     }
 
     Coroutine SetIsDestroyerFalseCoroutine;
@@ -227,7 +251,7 @@ public class GameplayManager : MonoBehaviour
         {
             StopCoroutine(SetIsDestroyerFalseCoroutine);
         }
-        SetIsDestroyerFalseCoroutine = StartCoroutine(SetDestroyerFalse(1));
+        SetIsDestroyerFalseCoroutine = StartCoroutine(SetDestroyerFalse(0.5f));
     }
     IEnumerator SetDestroyerFalse(float time)
     {
@@ -276,6 +300,7 @@ public class GameplayManager : MonoBehaviour
             {
                 case Collectible.coin:
                     linker.dataManager.playerData.coinsCount += 1;
+                    timeSurvived += 5;
                     break;
                 case Collectible.oneShot:
                     linker.playerVars.currentAbility = Ability.oneShot;
@@ -287,21 +312,19 @@ public class GameplayManager : MonoBehaviour
                     linker.playerVars.sideBoost.Add();
                     linker.gameEvents.OnChangedAbility(Ability.sideBoost);
                     break;
-
             }
+            linker.gameEvents.OnCollected(collectible);
             mapGenerator.collectiblesTilemap.SetTile(tilePos, null);
 
 
         }
     }
 
-    Vector2 zero = new Vector2(0, 0);
     void OnAim(Vector2 delta)
     {
-        if (delta != zero)
-            _aimDelta = delta;
+        _aimDelta = delta;
     }
-    void OnActionStart()
+    void OnAimEnd()
     {
         if (linker.playerVars.currentPhase == PlayerPhase.aim)
         {
@@ -311,6 +334,24 @@ public class GameplayManager : MonoBehaviour
             }
             StartGrapPhase();
         }
+      
+    }
+    void OnActionStart()
+    {
+        if(linker.playerVars.currentPhase == PlayerPhase.aim)
+        {
+            switch (linker.playerVars.currentAbility)
+            {
+                case Ability.oneShot:
+                    linker.playerVars.oneShot.Use();
+                    break;
+                case Ability.sideBoost:
+                    sideBoostScript.ResetSideBoost();
+                    sideBoostScript.SetSideBoost(0.3f, 50, (_aimDelta.x > 0 ? true : false));
+                    linker.playerVars.sideBoost.Use();
+                    break;
+            }
+        }
         else if (linker.playerVars.currentPhase == PlayerPhase.grap)
         {
             StartAimPhase();
@@ -319,41 +360,23 @@ public class GameplayManager : MonoBehaviour
     void OnActionEnd()
     {
         _grapPhase.StopPull();
-    }
-
-    void OnAbilityStart()
-    {
-        switch (linker.playerVars.currentAbility)
-        {
-            case Ability.oneShot:
-                linker.playerVars.oneShot.Use();
-                break;
-            case Ability.sideBoost:
-                sideBoostScript.ResetSideBoost();
-                sideBoostScript.SetSideBoost(0.3f, 50, (_aimDelta.x > 0 ? true : false));
-                linker.playerVars.sideBoost.Use();
-                /*abilityButton.color = inactiveColor;
-                _doSideBoost = true;
-                sideBoost.ResetSideBoost();
-                sideBoost.SetSideBoost(_boostTime, _force, (_aimDelta.x > 0 ? true : false));*/
-                break;
-        }
-    }
-    void OnAbilityEnd()
-    {
-        //_doSideBoost = false;
         if (linker.playerVars.currentAbility == Ability.sideBoost)
         {
             linker.playerVars.sideBoost.SetUsed();
         }
         SetIsDestroyerFalseDelayed();
         SetAbilityNoneIfNoLeft();
-
     }
-    /*public static IEnumerator StopBeDestroyer(float time)
+
+    void OnAbilityStart()
     {
-        yield return WaitForSeconds()
-    }*/
+        
+    }
+    void OnAbilityEnd()
+    {
+        
+    }
+   
     
     void SetAbilityNoneIfNoLeft()
     {

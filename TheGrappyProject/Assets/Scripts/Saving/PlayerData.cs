@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-
+/*
 [System.Serializable]
 public struct PlayerData
 {
@@ -28,3 +28,4 @@ public struct PlayerData
     }
 
 }
+*/

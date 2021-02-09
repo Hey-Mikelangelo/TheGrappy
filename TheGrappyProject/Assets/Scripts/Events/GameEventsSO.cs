@@ -17,6 +17,7 @@ public class GameEventsSO : ScriptableObject
     public event UnityAction<Ability> onChangedAbility;
     public event UnityAction onMapGenerated;
     public event UnityAction onSetIsDestroyerFalse;
+    public event UnityAction<Collectible> onCollected;
     public void OnPressPlay()
     {
         onPressPlay?.Invoke();
@@ -56,5 +57,9 @@ public class GameEventsSO : ScriptableObject
     public void OnSetIsDestroyerFalseDelayed()
     {
         onSetIsDestroyerFalse?.Invoke();
+    }
+    public void OnCollected(Collectible col)
+    {
+        onCollected?.Invoke(col);
     }
 }

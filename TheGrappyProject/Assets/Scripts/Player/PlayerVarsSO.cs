@@ -21,8 +21,8 @@ public class PlayerVarsSO : ScriptableObject
     public Vector3Int grapTilePos;
     public Quaternion aimWorldRotation;
     public Quaternion rotataionToGrapPoint;
-    public AbilityAccess sideBoost = new AbilityAccess(Ability.sideBoost, 1000);
-    public AbilityAccess oneShot = new AbilityAccess(Ability.oneShot, 1000);
+    public AbilityAccess sideBoost = new AbilityAccess(Ability.sideBoost, 9999);
+    public AbilityAccess oneShot = new AbilityAccess(Ability.oneShot, 9999);
 
     public AbilityAccess GetCurrentAbilityAcccess()
     {
@@ -40,21 +40,7 @@ public class PlayerVarsSO : ScriptableObject
     }
 
     private Coroutine _SetIsDestroyerFalseCoroutine;
-    /*public void SetIsDestroyer(bool isDestr, MonoBehaviour coroutineCaller)
-    {
-        if (isDestr)
-        {
-            isDestroyer = true;
-            if(_SetIsDestroyerFalseCoroutine != null)
-                coroutineCaller.StopCoroutine(_SetIsDestroyerFalseCoroutine);
-        }
-        else
-        {
-            if (_SetIsDestroyerFalseCoroutine != null)
-                coroutineCaller.StopCoroutine(_SetIsDestroyerFalseCoroutine);
-            _SetIsDestroyerFalseCoroutine = coroutineCaller.StartCoroutine(StopBeDestroyer(1));
-        }
-    }*/
+    
     IEnumerator StopBeDestroyer(float time)
     {
         yield return new WaitForSeconds(time);

@@ -12,8 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 577594b293f7bfa4fbab84d4faa6111d, type: 3}
   m_Name: PlayerDataSO
   m_EditorClassIdentifier: 
-  coinsCount: 14
-  nickname: 
+  coinsCount: 24
+  lastScore: 0
+  highScore: 53
+  nickname: player
   playerId: 0
   AchievementIds: 
   SkinsOpenedIds: 

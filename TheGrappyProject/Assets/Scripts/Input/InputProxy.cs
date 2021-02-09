@@ -5,9 +5,11 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
-[CreateAssetMenu (fileName = "InputProxySO", menuName = "Game/Input Proxy")]
-public class InputProxy : ScriptableObject, InputActions.IBaseGameplayActions {
+[CreateAssetMenu(fileName = "InputProxySO", menuName = "Game/Input Proxy")]
+public class InputProxy : ScriptableObject, InputActions.IBaseGameplayActions
+{
     public event UnityAction<Vector2> aimEvent;
+    public event UnityAction aimEndEvent;
     public event UnityAction actionStartEvent;
     public event UnityAction actionEndEvent;
     public event UnityAction abilityStartEvent;
@@ -28,15 +30,25 @@ public class InputProxy : ScriptableObject, InputActions.IBaseGameplayActions {
         _inputActions.BaseGameplay.Disable();
 
     }
-    public void OnAction (InputAction.CallbackContext context) {
+    public void OnAction(InputAction.CallbackContext context)
+    {
         if (context.started)
-            actionStartEvent?.Invoke ();
+            actionStartEvent?.Invoke();
         else if (context.canceled)
-            actionEndEvent?.Invoke ();
+            actionEndEvent?.Invoke();
     }
 
-    public void OnAim (InputAction.CallbackContext context) {
-            aimEvent?.Invoke (context.ReadValue<Vector2> ());
+    public void OnAim(InputAction.CallbackContext context)
+    {
+        Vector2 value = context.ReadValue<Vector2>();
+        if(value == new Vector2(0, 0))
+        {
+            aimEndEvent?.Invoke();
+        }
+        else
+        {
+            aimEvent?.Invoke(context.ReadValue<Vector2>());
+        }
     }
 
     public void OnAbility(InputAction.CallbackContext context)
