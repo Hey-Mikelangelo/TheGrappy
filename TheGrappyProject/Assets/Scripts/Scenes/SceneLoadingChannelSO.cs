@@ -11,6 +11,7 @@ public class SceneLoadingChannelSO : ScriptableObject
     public UnityAction<List<SceneInfoSO>, bool> onLoadScenes;
     public UnityAction<int> onSceneInted;
     public UnityAction onQuit;
+    public UnityAction onScenesAllOk;
     public UnityAction<SceneTransitionSO> onSetSceneTransition;
     private static bool _loadedInitScene;
     public void Load(List<SceneInfoSO> Scenes, bool showLoadingScreen)
@@ -32,6 +33,10 @@ public class SceneLoadingChannelSO : ScriptableObject
     private void Awake()
     {
       
+    }
+    public void SetInitSceneLoaded()
+    {
+        _loadedInitScene = true;
     }
     public void LoadInitScene()
     {

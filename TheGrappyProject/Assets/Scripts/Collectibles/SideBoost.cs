@@ -5,64 +5,53 @@ using UnityEngine;
 
 public class SideBoost : MonoBehaviour
 {
-    float _maxBoostTime;
-    bool _toRight;
-    float _force;
-    float timeElapsed = 0;
-    Coroutine boostCoroutine;
+    public float maxBoostTime;
+    public float force;
+    public float destroyerOffDelay;
     public LinkerSO linker;
+    bool _toRight;
+    float _timeElapsed = 0;
     PlayerVarsSO _playerVars;
-    GameEventsSO _gameEvents;
     private void Awake()
     {
         _playerVars = linker.playerVars;
-        _gameEvents = linker.gameEvents;
     }
-    public void SetSideBoost(float maxTime, float force, bool toRight)
+    public void SetDirection(bool toRight)
     {
-        _maxBoostTime = maxTime;
-        _force = force;
         _toRight = toRight;
     }
-    public void ResetSideBoost()
+    public void ResetTime()
     {
-        timeElapsed = 0;
-        if (_maxBoostTime <= 0)
+        _timeElapsed = 0;
+        if (maxBoostTime <= 0)
         {
-            _maxBoostTime = 0.05f;
+            maxBoostTime = 0.05f;
         }
     }
-    public Vector3 SideBoostStep(Transform boostTransform)
+    public bool HasLeftTime()
     {
-        if (timeElapsed < _maxBoostTime)
+        return _timeElapsed >= maxBoostTime ? false : true;
+    }
+    public Vector3 Step(Transform boostTransform)
+    {
+        if (_timeElapsed < maxBoostTime)
         {
-            _playerVars.isDestroyer = true;
+            _playerVars.SetIsDestroyer(true);
 
-            timeElapsed += Time.deltaTime;
-            float smoothForce = Mathf.Lerp(0, _force, timeElapsed / _maxBoostTime);
-            return ((_toRight ? smoothForce : -smoothForce) * boostTransform.right * Time.deltaTime);
+            _timeElapsed += Time.fixedDeltaTime;
+            float smoothForce = Mathf.Lerp(0, force, _timeElapsed / maxBoostTime);
+            return ((_toRight ? smoothForce : -smoothForce) * boostTransform.right * Time.fixedDeltaTime);
         }
         else
         {
-            _gameEvents.OnSetIsDestroyerFalseDelayed();
+            _playerVars.SetIsDestroyer(false);
+            _playerVars.sideBoost.DecreaseCount();
+            _playerVars.sideBoost.EndUse();
+            _playerVars.SetCurrentActiveAbility(Collectible.none);
             return Vector3.zero;
         }
     }
-    public void StartBoost()
-    {
-        //boostCoroutine = StartCoroutine(Boost(transform, force, toRight));
-    }
-    IEnumerator Boost(Transform boostTransform, float force, bool toRight)
-    {
-        float timeElapsed = 0;
 
-        while (timeElapsed < _maxBoostTime)
-        {
-            timeElapsed += Time.deltaTime;
-            float smoothForce = Mathf.Lerp(0, force, timeElapsed / _maxBoostTime);
-            boostTransform.position += (toRight ? smoothForce : -smoothForce) * boostTransform.right * Time.deltaTime;
-            yield return null;
-        }
-    }
+
 }
 

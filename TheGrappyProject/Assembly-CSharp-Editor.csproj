@@ -65,6 +65,7 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\Editor\CollectibleManagerEditor.cs" />
     <Compile Include="Assets\Scripts\Editor\ColorPointDrawer.cs" />
+    <Compile Include="Assets\Scripts\Editor\DeathPopUpScreenEditor.cs" />
     <Compile Include="Assets\Scripts\Editor\EditorList.cs" />
     <Compile Include="Assets\Scripts\Editor\ListTesterInspector.cs" />
     <Compile Include="Assets\Scripts\Editor\LoadTestEditor.cs" />

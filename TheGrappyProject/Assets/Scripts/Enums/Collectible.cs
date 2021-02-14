@@ -2,5 +2,6 @@ public enum Collectible
 {
 	coin,
 	sideBoost,
-	oneShot
+	oneShot,
+	none
 }

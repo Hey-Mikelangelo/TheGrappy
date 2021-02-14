@@ -19,10 +19,10 @@ MonoBehaviour:
   perlinScale: 0.3
   chunkSize: 20
   chunksLoadingRadius: 40
-  wallPerlinThreshold: 0.0731
+  wallPerlinThreshold: 0.0766
   wallCellScaling: 2
-  collectiblesPerlinThreshold: 0.9667
-  powerupChance: 0.25
+  collectiblesPerlinThreshold: 0.9468
+  powerupChance: 1
   collectibleCellScaling: 2
   Tiles:
   - {fileID: 11400000, guid: 45d62d681068d2b468ca0712a26c0d73, type: 2}

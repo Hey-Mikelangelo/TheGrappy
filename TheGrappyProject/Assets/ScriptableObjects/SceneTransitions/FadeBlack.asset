@@ -12,5 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7493bf6c60d402444b4fb17fe37a309c, type: 3}
   m_Name: FadeBlack
   m_EditorClassIdentifier: 
-  transitionCanvas: {fileID: 8764386577754617771, guid: 12d7a1cfdf833634597dd6617dffce9f,
+  transitionCanvas: {fileID: 8764386577754617771, guid: bb1142b4b593a9c47a969215f028d41e,
     type: 3}
+  hasLoadingBar: 1
+  onlyDisable: 0

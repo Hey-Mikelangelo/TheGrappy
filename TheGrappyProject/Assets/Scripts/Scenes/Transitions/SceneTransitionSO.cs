@@ -16,14 +16,19 @@ public class SceneTransitionSO : ScriptableObject
     public UnityAction onStartTransitionCompleted;
     public UnityAction onEndTransitionCompleted;
     public bool hasLoadingBar = false;
+    public bool onlyDisable = false;
 
     private GameObject _transitionCanvasInstance;
+    private Canvas _mainCanvas;
     private Slider _loadingProgressSlider;
     private Animator _animator;
     private RuntimeAnimatorController _animatorController;
     private MonoBehaviour _coroutineCaller;
     private bool _hasAnimator = false;
     private Scene _persistentScene;
+    private Coroutine StartCoroutine, EndCoroutine;
+    private static bool _isInstantiated = false;
+    private bool started;
     static void SetAsCurrentTransition(SceneTransitionSO transition)
     {
         currentTransition = transition;
@@ -33,29 +38,49 @@ public class SceneTransitionSO : ScriptableObject
     {
         isTransition = false;
     }
-
     /// <summary>
     /// In most cases pass "this" as "coroutineCaller". 
     /// Instantiates transitionCanvas in persistent scene, waits for end of start-transition 
     /// animation and fires the "onStartTransitionCompleted" event (UnityAction).
     /// Call "EndTransition" to play end-transition animation. Fires "onEndTransitionCompleted" 
-    /// event (UnityAction) on end-transition animation completion.
+    /// event (UnityAction) on end-transition animation completion. Returns instance of transition canvas
     /// </summary>
     /// <param name="coroutineCaller">in most cases just pass "this"</param>
-    public void StartTransition(MonoBehaviour coroutineCaller, Scene persistentScene)
+    public GameObject StartTransition(MonoBehaviour coroutineCaller, Scene persistentScene)
     {
+
+        if (StartCoroutine != null)
+            coroutineCaller.StopCoroutine(StartCoroutine);
+        if (EndCoroutine != null)
+            coroutineCaller.StopCoroutine(EndCoroutine);
+
         _persistentScene = persistentScene;
         SceneTransitionSO.SetAsCurrentTransition(this);
         Scene oldActiveScene = SceneManager.GetActiveScene();
         SceneManager.SetActiveScene(_persistentScene);
-        _transitionCanvasInstance = Instantiate(transitionCanvas);
-        SceneManager.SetActiveScene(oldActiveScene);
-        _transitionCanvasInstance.GetComponent<Canvas>().sortingOrder = 255;
+        if (_transitionCanvasInstance == null)
+        {
+            _transitionCanvasInstance = Instantiate(transitionCanvas);
+        }
+        else
+        {
+            _mainCanvas.enabled = true;
+        }
+        _isInstantiated = true;
+        if (SceneManager.GetSceneByBuildIndex(oldActiveScene.buildIndex).isLoaded)
+        {
+            SceneManager.SetActiveScene(oldActiveScene);
+        }
+        else
+        {
+
+        }
         _coroutineCaller = coroutineCaller;
         CheckComponents();
         if (!_hasAnimator)
         {
-            return;
+            onStartTransitionCompleted?.Invoke();
+            return _transitionCanvasInstance;
         }
         if (hasLoadingBar)
         {
@@ -65,7 +90,9 @@ public class SceneTransitionSO : ScriptableObject
         float transitionTime = _animatorController.animationClips[0].length;
         _animator.ResetTrigger("end");
         _animator.SetTrigger("start");
-        _coroutineCaller.StartCoroutine(StartTransitionCompletedCaller(transitionTime));
+        StartCoroutine = _coroutineCaller.StartCoroutine(StartTransitionCompletedCaller(transitionTime));
+        started = true;
+        return _transitionCanvasInstance;
     }
     IEnumerator StartTransitionCompletedCaller(float transitionTime)
     {
@@ -78,18 +105,38 @@ public class SceneTransitionSO : ScriptableObject
     /// </summary>
     public void EndTransition()
     {
+        if (!started)
+        {
+            return;
+        }
+        started = false;
+        if (StartCoroutine != null)
+            _coroutineCaller.StopCoroutine(StartCoroutine);
+        if (EndCoroutine != null)
+            _coroutineCaller.StopCoroutine(EndCoroutine);
+
         float transitionTime = _animatorController.animationClips[1].length;
         _animator.ResetTrigger("start");
         _animator.SetTrigger("end");
-        _coroutineCaller.StartCoroutine(EndTransitionCompletedCaller(transitionTime));
+        EndCoroutine = _coroutineCaller.StartCoroutine(EndTransitionCompletedCaller(transitionTime));
     }
     IEnumerator EndTransitionCompletedCaller(float transitionTime)
     {
         yield return new WaitForSeconds(transitionTime);
 
         SceneTransitionSO.OnTransitionEnded();
+        if (onlyDisable)
+        {
+            _mainCanvas.enabled = false;
+        }
+        else
+        {            
+            Destroy(_transitionCanvasInstance);
+            _isInstantiated = false;
+            _transitionCanvasInstance = null;
+        }
+
         onEndTransitionCompleted?.Invoke();
-        Destroy(_transitionCanvasInstance);
     }
     public void SetProgressValue(float value)
     {
@@ -102,11 +149,12 @@ public class SceneTransitionSO : ScriptableObject
     {
         GetAnimator();
         GetSlider();
+        GetCanvas();
     }
     void GetAnimator()
     {
         _animator = _transitionCanvasInstance.GetComponentInChildren<Animator>();
-        if(_animator != null)
+        if (_animator != null)
         {
             _hasAnimator = true;
         }
@@ -119,13 +167,21 @@ public class SceneTransitionSO : ScriptableObject
     void GetSlider()
     {
         _loadingProgressSlider = _transitionCanvasInstance.GetComponentInChildren<Slider>();
-        if(_loadingProgressSlider != null)
+        if (_loadingProgressSlider != null)
         {
             hasLoadingBar = true;
         }
         else
         {
             hasLoadingBar = false;
+        }
+    }
+    void GetCanvas()
+    {
+        _mainCanvas = _transitionCanvasInstance.GetComponent<Canvas>();
+        if (_mainCanvas == null)
+        {
+            Debug.LogWarning("No canvas in top object " + _transitionCanvasInstance);
         }
     }
     private void OnEnable()

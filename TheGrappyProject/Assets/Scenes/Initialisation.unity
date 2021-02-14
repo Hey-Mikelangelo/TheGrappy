@@ -216,6 +216,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1013366825}
   - component: {fileID: 1013366827}
+  - component: {fileID: 1013366826}
+  - component: {fileID: 1013366828}
   m_Layer: 0
   m_Name: SceneLoader
   m_TagString: Untagged
@@ -237,6 +239,22 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1013366826
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1013366824}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9811cecdfcf6b44e8ff2d7e94ae017e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pupUpScreen: {fileID: 11400000, guid: 9c88235beae4e4f4caea5db867f4e81e, type: 2}
+  gameEvents: {fileID: 0}
+  _closing: 0
+  _opening: 0
 --- !u!114 &1013366827
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -253,10 +271,33 @@ MonoBehaviour:
     type: 2}
   PersistentScenes:
   - {fileID: 11400000, guid: 49b78fa6d05b57b43bc9a1551476ec24, type: 2}
+  - {fileID: 11400000, guid: 3c15c92bb2d057d44ab5316aa44d3867, type: 2}
   SceneTransitions:
   - {fileID: 11400000, guid: 7b0b80c31cb6d8a4a9ef59d495519549, type: 2}
   - {fileID: 11400000, guid: 1d0bd0899a5b2094481c8c84f6930536, type: 2}
-  CurrentLoadingScenes: []
+  ScenesToLoadOnStart:
+  - {fileID: 11400000, guid: c32f6dead18357e489ef128e7b16db23, type: 2}
+  - {fileID: 11400000, guid: 3c15c92bb2d057d44ab5316aa44d3867, type: 2}
   isLoadingScreen: 0
   loadingProgress: 0
-  currentSceneTransition: {fileID: 0}
+--- !u!114 &1013366828
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1013366824}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53fee93a800cd794487a55771ffb8af8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameEvents: {fileID: 11400000, guid: c8267ebac73fee446831403ce8162e4d, type: 2}
+  sceneLoadingChannel: {fileID: 11400000, guid: e11ff3edc45699c4494a83827bdf8854,
+    type: 2}
+  GameScenes:
+  - {fileID: 11400000, guid: c32f6dead18357e489ef128e7b16db23, type: 2}
+  DeathScreenTransition: {fileID: 11400000, guid: 9c88235beae4e4f4caea5db867f4e81e,
+    type: 2}
+  HideLoadingSceneTransition: {fileID: 11400000, guid: ae7a5ddf94a89454398d563d038b232c,
+    type: 2}

@@ -2,52 +2,53 @@
 
 public class AbilityAccess
 {
-    public Ability ability;
+    public Collectible ability;
     public int maxCount;
-    private List<bool> Available;
-    public bool doUse;
-
+    private int count;
+    private bool isUsing;
+    public void Reset()
+    {
+        count = 0;
+        isUsing = false;
+    }
     public int GetCount()
     {
-        return Available.Count;
+        return count;
     }
-    public bool CheckUse()
+    public bool GetUse()
     {
-        return doUse;
-    }
-
-    public void Use()
-    {
-        if (Available.Count > 0)
-        {
-            doUse = true;
-        }
+        return isUsing;
     }
     public void Add()
     {
-        if(Available.Count < maxCount)
-            Available.Add(true);
+        if (count < maxCount)
+            count++;
     }
-    
-    //returns false if there is no more collected ability
-    public bool SetUsed()
+    public void Use()
     {
-        doUse = false;
-        if (Available.Count > 0)
-        {
-            Available.RemoveAt(Available.Count - 1);
-        }
-        return Available.Count > 0 ? true : false;
+        isUsing = true;
     }
-    public AbilityAccess(Ability ability, int maxCount)
+    public void EndUse()
+    {
+        isUsing = false;
+    }
+    //return false if cannot use
+    public bool DecreaseCount()
+    {
+        if(count > 0)
+        {
+            count--;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    public AbilityAccess(Collectible ability, int maxCount)
     {
         this.ability = ability;
         this.maxCount = maxCount;
-        Available = new List<bool>(maxCount);
-
-        for (int i = 0; i < maxCount; i++)
-        {
-            Available.Add(true);
-        }
+        count = 0;
     }
 }

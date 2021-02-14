@@ -20,8 +20,11 @@ public class AimPhase : MonoBehaviour
     private Vector3 _grapPos;
     private Vector3Int _grapTilePos;
     private float _aimAngle;
-    private GameplayManager _gameplayManager;
+    private PlayerBehaviour playerBehaviour;
+    private PlayerVarsSO playerVars;
     private Transform _playerTransform;
+    public MapGenerator mapGenerator;
+
     private Tilemap _wallTilemap;
 
     //should be called once to setup variables 
@@ -32,15 +35,16 @@ public class AimPhase : MonoBehaviour
         _grapPointsMask = grapPointsMask;
         _speed = speed;
         _grapPos = Vector3.zero;
-        _gameplayManager = GetComponent<GameplayManager>();
-        _gameplayManager.linker.playerVars.hasGrapPoint = false;
+        playerBehaviour = GetComponent<PlayerBehaviour>();
+        playerVars = playerBehaviour.linker.playerVars;
+        _wallTilemap = playerBehaviour.mapGenerator.wallTilemap;
+        playerVars.hasGrapPoint = false;
         aimPoint.GetComponent<SpriteRenderer>().enabled = false;
-        _wallTilemap = _gameplayManager.mapGenerator.wallTilemap;
 
     }
     void ResetGrap()
     {
-        _gameplayManager.linker.playerVars.hasGrapPoint = false;
+        playerVars.hasGrapPoint = false;
         aimPoint.GetComponent<SpriteRenderer>().enabled = false;
     }
     //should be called every time when switching to Aim phase
@@ -53,10 +57,10 @@ public class AimPhase : MonoBehaviour
         }
         else
             aimArrowHolder.GetChild(0).GetComponent<SpriteRenderer>().enabled = true;
-        
+
 
         laternLight.enabled = true;
-      
+
     }
     public void End()
     {
@@ -67,54 +71,43 @@ public class AimPhase : MonoBehaviour
         else
             aimArrowHolder.GetChild(0).GetComponent<SpriteRenderer>().enabled = false;
 
-        if(aimPoint!= null)
+        if (aimPoint != null)
         {
             aimPoint.GetComponent<SpriteRenderer>().enabled = false;
 
         }
 
         laternLight.enabled = false;
-       
+
     }
     private void OnDrawGizmos()
     {
         //Debug.DrawLine(_playerTransform.position, hit[0].point);
 
     }
-    private void DrawAim(Vector3 dir)
+    public void RotateAimToGrap()
     {
         Vector3 dirToHitPoint = new Vector3(hit[0].point.x - _playerTransform.position.x,
            hit[0].point.y - _playerTransform.position.y, 0);
         float angleToHit = Mathf.Atan2(dirToHitPoint.y, dirToHitPoint.x) * Mathf.Rad2Deg;
 
         Quaternion newRot = Quaternion.Euler(0, 0, angleToHit);
-        Quaternion prevRot = Quaternion.Euler(0, 0, _aimAngle);
         float angleDelta = Mathf.Abs(Quaternion.Angle(aimArrowHolder.rotation, newRot));
         aimArrowHolder.rotation = Quaternion.RotateTowards(aimArrowHolder.rotation, newRot, angleDelta / 5);
-
-        /*if (angleDelta > 20)
-        {
-        }
-        if (angleDelta > 10)
-        {
-            aimArrowHolder.rotation = Quaternion.RotateTowards(aimArrowHolder.rotation, newRot, 10);
-        }
-        else
-        {
-            aimArrowHolder.rotation = Quaternion.RotateTowards(aimArrowHolder.rotation, newRot, 0.5f);
-        }*/
-      
     }
-   
-    void RotateLight(Vector2 aimDelta)
+
+    public void RotateJoystickPointer(Vector2 aimDelta)
     {
         float playerAngle = Mathf.Atan2(_playerTransform.right.y, _playerTransform.right.x) * Mathf.Rad2Deg;
         float deltaAngle = Mathf.Atan2(aimDelta.y, aimDelta.x) * Mathf.Rad2Deg;
         float angle = deltaAngle + playerAngle;
-        Quaternion rotation = Quaternion.Euler(0, 0, angle);
-        laternLight.transform.rotation = rotation;
+        Quaternion newRot = Quaternion.Euler(0, 0, angle);
+        float angleDelta = Mathf.Abs(Quaternion.Angle(aimArrowHolder.rotation, newRot));
+        laternLight.transform.rotation = Quaternion.RotateTowards(laternLight.transform.rotation, newRot, angleDelta / 2);
     }
-    public void Run(Vector2 aimDelta, out Vector3 grapPos, out Vector3Int grapTilePos)
+
+    //returns position offset
+    public Vector3 Run(Vector2 aimDelta, out Vector3 grapPos, out Vector3Int grapTilePos)
     {
         float playerAngle = Mathf.Atan2(_playerTransform.right.y, _playerTransform.right.x) * Mathf.Rad2Deg;
         float deltaAngle = Mathf.Atan2(aimDelta.y, aimDelta.x) * Mathf.Rad2Deg;
@@ -127,34 +120,32 @@ public class AimPhase : MonoBehaviour
 
         //change grap posiotion only if found new target
         if (hitCount != 0)
-        { 
-            
+        {
+
             _grapPos = hit[0].point;
             Vector3 grapTileWorldPos = _grapPos - new Vector3(hit[0].normal.x, hit[0].normal.y, 0);
 
-            Debug.DrawLine(hit[0].point, _grapPos +new Vector3(hit[0].normal.x, hit[0].normal.y, 0));
+            Debug.DrawLine(hit[0].point, _grapPos + new Vector3(hit[0].normal.x, hit[0].normal.y, 0));
 
             _grapTilePos = _wallTilemap.WorldToCell(grapTileWorldPos);
-            
+
         }
         if (MapGenerator.CheckForTile(_wallTilemap, _grapTilePos))
         {
-            _gameplayManager.linker.playerVars.hasGrapPoint = true;
+            playerVars.hasGrapPoint = true;
             aimPoint.GetComponent<SpriteRenderer>().enabled = true;
         }
         else
         {
-            _gameplayManager.linker.playerVars.hasGrapPoint = false;
+            playerVars.hasGrapPoint = false;
             aimPoint.GetComponent<SpriteRenderer>().enabled = false;
         }
-        _playerTransform.position += _playerTransform.up * _speed * Time.deltaTime;
-        RotateLight(aimDelta);
-        DrawAim(dir);
         SetAimPoint(_grapPos);
 
         grapPos = _grapPos;
         grapTilePos = _grapTilePos;
-       // SetAimPoint(_grapPos - (new Vector3(dir.x, dir.y, 0) * 0.5f));
+
+        return (_playerTransform.up * _speed * Time.fixedDeltaTime);
     }
     void CheckForAdjacent(Tilemap wallTilemap)
     {
@@ -173,12 +164,13 @@ public class AimPhase : MonoBehaviour
                 return;
             }
         }
-        _gameplayManager.linker.playerVars.hasGrapPoint = false;
+        playerVars.hasGrapPoint = false;
         //aimPoint.GetComponent<SpriteRenderer>().enabled = false;
     }
-    private void SetAimPoint(Vector3 point)
+    public void SetAimPoint(Vector3 point)
     {
-        aimPoint.position = point;
+        float delta = Vector3.Distance(aimPoint.position, point);
+        aimPoint.position = Vector3.MoveTowards(aimPoint.position, point, delta / 5);
     }
 
 }

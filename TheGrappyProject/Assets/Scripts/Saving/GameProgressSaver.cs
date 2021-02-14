@@ -1,11 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Data;
-using System.Globalization;
-using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
-using UnityEditor.SceneManagement;
-//using UnityEditor;
+﻿//using UnityEditor;
 using UnityEngine;
 
 public class GameProgressSaver : MonoBehaviour

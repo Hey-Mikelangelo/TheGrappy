@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: GameMenu
   m_EditorClassIdentifier: 
   name: GameMenu
-  path: D:\unityProjects\TheGrappy\TheGrappy\TheGrappyProject\Assets\Scenes\GameMenu.unity
-  buildIndex: 3
+  path: D:\unityProjects\TheGrappy\TheGrappy\TheGrappyProject\Assets\Scenes\Menus\GameMenu.unity
+  buildIndex: 1
   needsInitialisation: 0

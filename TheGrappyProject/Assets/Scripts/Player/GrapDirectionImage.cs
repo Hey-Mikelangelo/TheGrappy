@@ -15,7 +15,7 @@ public class GrapDirectionImage : MonoBehaviour
     }
     private void Update()
     {
-        if (playerVars.hasGrapPoint && playerVars.currentPhase == PlayerPhase.aim)
+        if (playerVars.hasGrapPoint && playerVars.currentMovePhase == MovePhase.aim)
         {
             image.enabled = true;
         }

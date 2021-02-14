@@ -26,7 +26,8 @@ public class GrapPhase : MonoBehaviour
     private Transform _prevParent;
     private Transform _playerTransform;
     private Coroutine _DoPullCoroutine;
-    private GameplayManager _gameplayManager;
+    private PlayerBehaviour playerBehaviour;
+    private PlayerVarsSO playerVars;
     public void Setup(Transform playerTransform, float speed, float maxRotSpeed, float rotToAlignTime, float pullSpeed,
        float minOrbitRadius, float pullDelay)
     {
@@ -41,8 +42,9 @@ public class GrapPhase : MonoBehaviour
         _prevParent = _playerTransform.parent;
         _lineRenderer = GetComponent<LineRenderer>();
         grapPoint.gameObject.GetComponent<SpriteRenderer>().enabled = false;
-        _gameplayManager = GetComponent<GameplayManager>();
-        _wallTilemap = _gameplayManager.mapGenerator.wallTilemap;
+        playerBehaviour = GetComponent<PlayerBehaviour>();
+        _wallTilemap = playerBehaviour.mapGenerator.wallTilemap;
+        playerVars = playerBehaviour.linker.playerVars;
     }
     public void Switch(Vector3 grapPointPos, Vector3Int grapTilePos)
     {
@@ -111,10 +113,10 @@ public class GrapPhase : MonoBehaviour
                 {
                     Vector3 vectorToGrap = grapPoint.position - _playerTransform.position;
                     vectorToGrap.Normalize();
-                    _playerTransform.position += vectorToGrap * _pullSpeed * Time.deltaTime;
+                    _playerTransform.position += vectorToGrap * _pullSpeed * Time.fixedDeltaTime;
                     _orbitRadius = Vector3.Distance(_playerTransform.position, grapPoint.position);
                 }
-                _playerTransform.position += _playerTransform.up * _speed * Time.deltaTime;
+                _playerTransform.position += _playerTransform.up * _speed * Time.fixedDeltaTime;
                 _lineRenderer.SetPosition(0, _playerTransform.position);
                 _lineRenderer.SetPosition(1, grapPoint.position);
                 if (!_lineRenderer.enabled)
@@ -125,14 +127,14 @@ public class GrapPhase : MonoBehaviour
         }
         if (!MapGenerator.CheckForTile(_wallTilemap, _wallTilemap.WorldToCell(_grapTilePos)))
         {
-            _gameplayManager.linker.playerVars.hasGrapPoint = false;
-            _gameplayManager.StartAimPhase();
+            playerVars.hasGrapPoint = false;
+            playerBehaviour.StartAimPhase();
         }
     }
     void SmoothRotationToAlignGrap()
     {
         _playerTransform.localRotation = Quaternion.Slerp(_prevRot, _newRot, _rotProgress);
-        _rotProgress += 1 / _rotToAlignTime * Time.deltaTime;
+        _rotProgress += 1 / _rotToAlignTime * Time.fixedDeltaTime;
     }
     void AttatchedMovement()
     {
@@ -144,7 +146,7 @@ public class GrapPhase : MonoBehaviour
         float rotSpeed = (_speed / _orbitRadius);
         rotSpeed = math.clamp(rotSpeed, 0, _maxRotSpeed);
         rotSpeed = _rotateClockwise ? -rotSpeed : rotSpeed;
-        grapPoint.Rotate(_playerTransform.forward, rotSpeed * Time.deltaTime * Mathf.Rad2Deg, Space.World);
+        grapPoint.Rotate(_playerTransform.forward, rotSpeed * Time.fixedDeltaTime * Mathf.Rad2Deg, Space.World);
         if (_doPull && _orbitRadius > _minOrbitRadius)
         {
             //when parent is scaled child's position is also scaled
@@ -152,7 +154,7 @@ public class GrapPhase : MonoBehaviour
             Vector3 dirToCenter = _playerTransform.localPosition.normalized;
             Vector3 newLocalPos = new Vector2(dirToCenter.x * _pullSpeed * adjustToGrapScale.x,
                dirToCenter.y * _pullSpeed * adjustToGrapScale.y);
-            _playerTransform.localPosition -= newLocalPos * Time.deltaTime;
+            _playerTransform.localPosition -= newLocalPos * Time.fixedDeltaTime;
         }
         _distToGrap = Vector3.Distance(_playerTransform.position, grapPoint.position);
         _orbitRadius = _distToGrap;

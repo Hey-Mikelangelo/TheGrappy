@@ -22,6 +22,7 @@ public class MapGenerator : MonoBehaviour
     public List<Vector2Int> _LoadedChunks;
     public List<Vector2Int> _ChunksNeeded;
     public int chunkCountSide;
+    private static Vector2 randomPerlinOffset;
     private void Awake()
     {
         chunkCountSide = Mathf.CeilToInt((float)mapData.chunksLoadingRadius / mapData.chunkSize);
@@ -69,7 +70,7 @@ public class MapGenerator : MonoBehaviour
             if(tilesCounter >= tilesPerFrame)
             {
                 tilesCounter = 0;
-                yield return null;
+                yield return new WaitForFixedUpdate();
             }
         }
     }
@@ -173,9 +174,33 @@ public class MapGenerator : MonoBehaviour
             }
         }
 
-        Scene scene = gameObject.scene;
-        linker.gameEvents.OnMapGenerated();
-        sceneLoadingChannel.SetSceneInited(scene.buildIndex);
+        linker.gameEvents.MapGenerated();
+       
+    }
+    public void ClearMap()
+    {
+        StartCoroutine(DeleteAllChunks());
+    }
+    IEnumerator DeleteAllChunks()
+    {
+        List<Vector2Int> LoadedChunksCopy = new List<Vector2Int>(_LoadedChunks);
+        _LoadedChunks.Clear();
+        _ChunksNeeded.Clear();
+        for (int i = 0; i < LoadedChunksCopy.Count; i++)
+        {
+            Vector2Int chunkIndx = LoadedChunksCopy[i];
+            ChunkData collectiblesChunk = ChunksCollectibles.Find(
+                    ch => ch.chunkIndex == chunkIndx);
+            ChunkData wallsChunk = ChunksWalls.Find(
+                ch => ch.chunkIndex == chunkIndx);
+
+            UnloadChunk(collectiblesChunk, collectiblesTilemap);
+            UnloadChunk(wallsChunk, wallTilemap);
+            yield return null;
+        }
+        ChunksCollectibles.Clear();
+        ChunksCollectiblesRemovedTiles.Clear();
+        ChunksWalls.Clear();
     }
     void GenerateMapChunk(int chunkX, int chunkY)
     {
@@ -238,10 +263,16 @@ public class MapGenerator : MonoBehaviour
         return new Vector2Int(Mathf.FloorToInt(mapPos.x / resolution),
                     Mathf.FloorToInt(mapPos.y / resolution));
     }
+
+    public static void GenerateRandomPerlinOffset()
+    {
+        randomPerlinOffset.x = Random.Range(-9999f, 9999f);
+        randomPerlinOffset.y = Random.Range(-9999f, 9999f);
+    }
     public static bool GetAbsolutePerlin(int x, int y, float resolution, float scale, float threshold)
     {
-        float xCoord = (x / resolution * scale) + 1000;
-        float yCoord = (y / resolution * scale) + 1000;
+        float xCoord = (x / resolution * scale) + randomPerlinOffset.x;
+        float yCoord = (y / resolution * scale) + randomPerlinOffset.y;
         float perlin = Mathf.PerlinNoise(xCoord, yCoord);
         return perlin > threshold ? true : false;
     }

@@ -8,10 +8,10 @@ public class BulletMove : MonoBehaviour
     public float speed;
     public float lifeTime;
     public float timeElapsed;
-    private void Update()
+    private void FixedUpdate()
     {
-        transform.position += transform.up * speed * Time.deltaTime;
-        timeElapsed += Time.deltaTime;
+        transform.position += transform.up * speed * Time.fixedDeltaTime;
+        timeElapsed += Time.fixedDeltaTime;
         if (timeElapsed >= lifeTime)
         {
             Destroy(gameObject);
@@ -48,7 +48,7 @@ public class BulletMove : MonoBehaviour
         for (int i = 0; i < TilePositions.Count; i++)
         {
             tilemap.SetTile(TilePositions[i], null);
-            yield return null;
+            yield return new WaitForFixedUpdate();
         }
         Destroy(gameObject);
     }

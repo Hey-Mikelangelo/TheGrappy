@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: sideBoostTile
   m_EditorClassIdentifier: 
   m_Sprite: {fileID: 21300000, guid: 1c0ea68ae29c941408aad325ea9ee563, type: 3}
-  m_Color: {r: 0, g: 0.37421387, b: 0.8018868, a: 1}
+  m_Color: {r: 0, g: 0.30924988, b: 0.5943396, a: 1}
   m_Transform:
     e00: 1
     e01: 0

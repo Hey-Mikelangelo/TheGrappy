@@ -14,24 +14,25 @@ public class AbilityButtonImage : MonoBehaviour
 
     public void OnEnable()
     {
-        gameEvents.onChangedAbility += OnCollectedAbility;
+        gameEvents.onChangedAbility += OnChangedAbility;
         image = GetComponent<Image>();
     }
     public void OnDisable()
     {
-        gameEvents.onChangedAbility -= OnCollectedAbility;
+        gameEvents.onChangedAbility -= OnChangedAbility;
+
     }
-    void OnCollectedAbility(Ability ability)
+    void OnChangedAbility(Collectible ability)
     {
         switch (ability)
         {
-            case Ability.none:
+            case Collectible.none:
                 image.color = inactiveColor;
                 break;
-            case Ability.oneShot:
+            case Collectible.oneShot:
                 image.color = oneShotColor;
                 break;
-            case Ability.sideBoost:
+            case Collectible.sideBoost:
                 image.color = sideBoostColor;
                 break;
         }

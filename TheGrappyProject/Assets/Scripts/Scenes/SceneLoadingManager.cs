@@ -11,10 +11,12 @@ public class SceneLoadingManager : MonoBehaviour
     
     public List<SceneInfoSO> PersistentScenes = new List<SceneInfoSO>();
     public List<SceneTransitionSO> SceneTransitions = new List<SceneTransitionSO>();
+    public List<SceneInfoSO> ScenesToLoadOnStart = new List<SceneInfoSO>();
+
     //Loading scenes
-    public List<SceneInfoSO> CurrentLoadingScenes = new List<SceneInfoSO>();
-    public Dictionary<int, bool> SceneInitedIndexesDict = new Dictionary<int, bool>();
     public UnityAction<int> onSceneLoaded;
+    private List<SceneInfoSO> _CurrentLoadingScenes = new List<SceneInfoSO>();
+    private Dictionary<int, bool> _SceneInitedIndexesDict = new Dictionary<int, bool>();
 
     //Loading screen
     public bool isLoadingScreen;
@@ -27,7 +29,7 @@ public class SceneLoadingManager : MonoBehaviour
     public UnityAction onEndTransitionCompleted;
 
     //Scene transitions
-    public SceneTransitionSO currentSceneTransition;
+    private SceneTransitionSO _currentSceneTransition;
 
     private int _initedSceneCount;
     private List<SceneInfoSO> _ScenesToLoad;
@@ -55,12 +57,22 @@ public class SceneLoadingManager : MonoBehaviour
 
 
     }
+    private void Awake()
+    {
+        sceneLoadingChannelSO.SetInitSceneLoaded();
+    }
+    private void Start()
+    {
+        SetSceneTransition(0);
+        LoadScenes(ScenesToLoadOnStart, true);
+    }
     public void Quit()
     {
         Application.Quit();
     }
     public void LoadScenes(List<SceneInfoSO> ScenesToLoad, bool showLoadingScreen)
     {
+        ResetManager();
         SetManager(ScenesToLoad);
         if (showLoadingScreen)
         {
@@ -95,13 +107,13 @@ public class SceneLoadingManager : MonoBehaviour
     }
     public void SetSceneTransition(SceneTransitionSO transitionSO)
     {
-        currentSceneTransition = transitionSO;
+        _currentSceneTransition = transitionSO;
     }
     public bool SetSceneTransition(int indexInSceneTranstionList)
     {
         if (indexInSceneTranstionList >= 0 && indexInSceneTranstionList < SceneTransitions.Count)
         {
-            currentSceneTransition = SceneTransitions.ElementAt(indexInSceneTranstionList);
+            _currentSceneTransition = SceneTransitions.ElementAt(indexInSceneTranstionList);
             return true;
         }
         else
@@ -112,27 +124,24 @@ public class SceneLoadingManager : MonoBehaviour
     private void ResetManager()
     {
         loadingProgress = 0;
-        SceneInitedIndexesDict.Clear();
-        CurrentLoadingScenes.Clear();
+        _SceneInitedIndexesDict.Clear();
+        _CurrentLoadingScenes.Clear();
         _initedSceneCount = 0;
         _allScenesInited = false;
         _allScenesLoaded = false;
         isLoadingScreen = false;
 
-        currentSceneTransition.onStartTransitionCompleted -= OnStartTransitionCompleted;
-        currentSceneTransition.onEndTransitionCompleted -= OnEndTransitionCompleted;
-
-
+       
     }
     private void SetManager(List<SceneInfoSO> ScenesToLoad)
     {
-        if (currentSceneTransition == null)
+        if (_currentSceneTransition == null)
         {
-            currentSceneTransition = SceneTransitions.ElementAt(0);
+            _currentSceneTransition = SceneTransitions.ElementAt(0);
         }
 
-        currentSceneTransition.onStartTransitionCompleted += OnStartTransitionCompleted;
-        currentSceneTransition.onEndTransitionCompleted += OnEndTransitionCompleted;
+        _currentSceneTransition.onStartTransitionCompleted += OnStartTransitionCompleted;
+        _currentSceneTransition.onEndTransitionCompleted += OnEndTransitionCompleted;
 
         _ScenesToLoad = ScenesToLoad;
         SceneLoader.SetPersistentScenes(PersistentScenes);
@@ -144,11 +153,11 @@ public class SceneLoadingManager : MonoBehaviour
             scene = _ScenesToLoad.ElementAt(i);
             if (scene.needsInitialisation)
             {
-                SceneInitedIndexesDict.Add(scene.buildIndex, false);
+                _SceneInitedIndexesDict.Add(scene.buildIndex, false);
             }
-            CurrentLoadingScenes.Add(scene);
+            _CurrentLoadingScenes.Add(scene);
         }
-        if (SceneInitedIndexesDict.Count == 0)
+        if (_SceneInitedIndexesDict.Count == 0)
         {
             _allScenesInited = true;
         }
@@ -164,7 +173,7 @@ public class SceneLoadingManager : MonoBehaviour
     {        
         //Scene persistentScene = SceneManager.GetSceneByBuildIndex(PersistentScenes[0].buildIndex);
         Scene persistentScene = gameObject.scene;
-        currentSceneTransition.StartTransition(this, persistentScene);
+        _currentSceneTransition.StartTransition(this, persistentScene);
     }
     private void OnStartTransitionCompleted()
     {
@@ -175,12 +184,12 @@ public class SceneLoadingManager : MonoBehaviour
     private IEnumerator SetSceneLoadingProgressBar()
     {
         loadingProgress = SceneLoader.GetLoadingProgress();
-        currentSceneTransition.SetProgressValue(loadingProgress);
+        _currentSceneTransition.SetProgressValue(loadingProgress);
 
         while (loadingProgress != 1)
         {
             loadingProgress = SceneLoader.GetLoadingProgress();
-            currentSceneTransition.SetProgressValue(loadingProgress);
+            _currentSceneTransition.SetProgressValue(loadingProgress);
             yield return null;
         }
     }
@@ -188,12 +197,12 @@ public class SceneLoadingManager : MonoBehaviour
     public void SetSceneInited(int sceneIndex)
     {
         bool isOk;
-        if (SceneInitedIndexesDict.TryGetValue(sceneIndex, out isOk))
+        if (_SceneInitedIndexesDict.TryGetValue(sceneIndex, out isOk))
         {
             _initedSceneCount++;
 
         }
-        if (SceneInitedIndexesDict.Count == _initedSceneCount)
+        if (_SceneInitedIndexesDict.Count == _initedSceneCount)
         {
             _allScenesInited = true;
             onAllScenesInited?.Invoke();
@@ -215,11 +224,16 @@ public class SceneLoadingManager : MonoBehaviour
 
     private void OnAllScenesOk()
     {
-        onEndTransitionCompleted = currentSceneTransition.onEndTransitionCompleted;
-        currentSceneTransition.EndTransition();
+        onEndTransitionCompleted = _currentSceneTransition.onEndTransitionCompleted;
+        sceneLoadingChannelSO.onScenesAllOk?.Invoke();
+        _currentSceneTransition.EndTransition();
     }
     private void OnEndTransitionCompleted()
     {
         ResetManager();
+        _currentSceneTransition.onStartTransitionCompleted -= OnStartTransitionCompleted;
+        _currentSceneTransition.onEndTransitionCompleted -= OnEndTransitionCompleted;
+
+
     }
 }

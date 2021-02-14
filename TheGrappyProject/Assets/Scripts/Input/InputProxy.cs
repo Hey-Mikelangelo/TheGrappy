@@ -38,17 +38,20 @@ public class InputProxy : ScriptableObject, InputActions.IBaseGameplayActions
             actionEndEvent?.Invoke();
     }
 
+    Vector2 prevAim;
+    Vector2 zero = new Vector2(0, 0);
     public void OnAim(InputAction.CallbackContext context)
     {
         Vector2 value = context.ReadValue<Vector2>();
-        if(value == new Vector2(0, 0))
+        if(value == zero && prevAim != zero)
         {
             aimEndEvent?.Invoke();
         }
         else
         {
-            aimEvent?.Invoke(context.ReadValue<Vector2>());
+            aimEvent?.Invoke(value);
         }
+        prevAim = value;
     }
 
     public void OnAbility(InputAction.CallbackContext context)

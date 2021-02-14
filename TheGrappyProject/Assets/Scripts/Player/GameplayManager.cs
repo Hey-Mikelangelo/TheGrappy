@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Runtime.CompilerServices;
 using UnityEngine;
-using UnityEngine.Tilemaps;
 
 public enum PlayerPhase
 {
@@ -13,7 +12,8 @@ public enum PlayerPhase
 [RequireComponent(typeof(AimPhase), typeof(GrapPhase), typeof(GameProgressSaver))]
 public class GameplayManager : MonoBehaviour
 {
-    public LinkerSO linker;
+   /* public LinkerSO linker;
+    public Collider2D wallCollider;
     public MapGenerator mapGenerator;
     public OneShot oneShotScript;
     public SideBoost sideBoostScript;
@@ -39,8 +39,8 @@ public class GameplayManager : MonoBehaviour
     private Vector2 _aimDelta;
     private Vector2Int _prevPlayerChunk;
     private Vector3 _startPos;
-    private float timeSurvived = 0;
-    private void Update()
+    private float timeSurvived;
+    private void FixedUpdate()
     {
         linker.playerVars.currentChunk = GetCurrentChunk();
         if (_prevPlayerChunk != linker.playerVars.currentChunk)
@@ -48,15 +48,16 @@ public class GameplayManager : MonoBehaviour
             mapGenerator.UpdateChunks(linker.playerVars.currentChunk);
         }
         _prevPlayerChunk = linker.playerVars.currentChunk;
-        if (!linker.playerVars.isMoving)
+        if (!linker.playerVars.canMove)
         {
             return;
         }
 
-        timeSurvived += Time.deltaTime;
+        timeSurvived += Time.fixedDeltaTime;
+        
         linker.playerData.lastScore = Mathf.FloorToInt(timeSurvived*10);
 
-        switch (linker.playerVars.currentAbility)
+        switch (linker.playerVars.currentSelectedAbility)
         {
             case Ability.oneShot:
                 if (linker.playerVars.oneShot.CheckUse())
@@ -71,7 +72,7 @@ public class GameplayManager : MonoBehaviour
             case Ability.sideBoost:
                 if (linker.playerVars.sideBoost.CheckUse())
                 {
-                    player.transform.position += sideBoostScript.SideBoostStep(player.transform);
+                    player.transform.position += sideBoostScript.Step(player.transform);
                 }
                 break;
         }
@@ -91,10 +92,12 @@ public class GameplayManager : MonoBehaviour
     private void Start()
     {
         SetupInitial();
-
+        Application.targetFrameRate = 30;
     }
     private void OnEnable()
     {
+        wallCollider.enabled = false;
+
         LinkScripts();
 
         LoadPlayerData();
@@ -117,6 +120,8 @@ public class GameplayManager : MonoBehaviour
     }
     void SetupInitial()
     {
+        MapGenerator.GenerateRandomPerlinOffset();
+
         if (player == null)
         {
             player = gameObject;
@@ -124,12 +129,10 @@ public class GameplayManager : MonoBehaviour
         SetupAimPhase();
         SetupGrapPhase();
         SubsribeEvents();
-
-        Application.targetFrameRate = 30;
-
+        
         _startPos = player.transform.position;
 
-        linker.playerVars.isMoving = false;
+        linker.playerVars.canMove = false;
         linker.playerVars.isMapGenerated = false;
 
         linker.playerData.lastScore = 0;
@@ -143,11 +146,11 @@ public class GameplayManager : MonoBehaviour
     }
     void OnMapgenerated()
     {
-        if (!linker.playerVars.isMoving)
+        if (!linker.playerVars.canMove)
         {
             
-            Vector3 bottomLeft = player.transform.position + new Vector3(-clearAreaRadius, -clearAreaRadius, 0);
-            Vector3 topRight = player.transform.position + new Vector3(clearAreaRadius, clearAreaRadius, 0);
+            Vector3 bottomLeft = player.transform.position + new Vector3(-clearAreaRadius, -clearAreaRadius+5, 0);
+            Vector3 topRight = player.transform.position + new Vector3(clearAreaRadius, clearAreaRadius+5, 0);
             mapGenerator.ClearAreaBox(bottomLeft, topRight);
             if (linker.playerVars.isWaitingForMapGenerated)
             {
@@ -157,6 +160,7 @@ public class GameplayManager : MonoBehaviour
             }
         }
         linker.playerVars.isMapGenerated = true;
+        wallCollider.enabled = true;
 
     }
     public void StartAimPhase()
@@ -197,10 +201,10 @@ public class GameplayManager : MonoBehaviour
         linker.inputProxy.abilityStartEvent += OnAbilityStart;
         linker.inputProxy.abilityEndEvent += OnAbilityEnd;
         linker.playerCollisionChannel.collision2DEvent += OnPlayerCollision;
-        linker.gameEvents.onUnfadedToPlay += StartGame;
-        linker.gameEvents.onMapGenerated += OnMapgenerated;
+        linker.gameEventss.onUnfadedToPlay += StartGame;
+        linker.gameEventss.onMapGenerated += OnMapgenerated;
         Application.quitting += SavePlayerData;
-        linker.gameEvents.onSetIsDestroyerFalse += SetIsDestroyerFalseDelayed;
+        linker.gameEventss.onSetIsDestroyerFalse += SetIsDestroyerFalseDelayed;
     }
     
     void UnsubsribeEvents()
@@ -212,36 +216,48 @@ public class GameplayManager : MonoBehaviour
         linker.inputProxy.abilityStartEvent -= OnAbilityStart;
         linker.inputProxy.abilityEndEvent -= OnAbilityEnd;
         linker.playerCollisionChannel.collision2DEvent -= OnPlayerCollision;
-        linker.gameEvents.onUnfadedToPlay -= StartGame;
-        linker.gameEvents.onMapGenerated -= OnMapgenerated;
+        linker.gameEventss.onUnfadedToPlay -= StartGame;
+        linker.gameEventss.onMapGenerated -= OnMapgenerated;
         Application.quitting -= SavePlayerData;
-        linker.gameEvents.onSetIsDestroyerFalse -= SetIsDestroyerFalseDelayed;
+        linker.gameEventss.onSetIsDestroyerFalse -= SetIsDestroyerFalseDelayed;
 
     }
     void StartGame()
     {
+        linker.playerData.lastScore = 0;
         if (!linker.playerVars.isMapGenerated)
         {
             linker.playerVars.isWaitingForMapGenerated = true;
             return;
         }
-        linker.playerVars.isMoving = true;
+        linker.playerVars.canMove = true;
     }
     void Die()
     {
+        linker.gameEventss.OnPlayerDeath();
+        GetComponent<SceneSwitch>().LoadScenes();
+
+        return;
+        wallCollider.enabled = false;
         float time = 0.5f;
-        linker.gameEvents.OnFadeToMenu(time);
+        //mapGenerator.ClearMap();
+        MapGenerator.GenerateRandomPerlinOffset();
+        linker.gameEventss.OnFadeToMenu(time);
         if(linker.playerData.lastScore > linker.playerData.highScore)
         {
             linker.playerData.highScore = linker.playerData.lastScore;
         }
         timeSurvived = 0;
         SavePlayerData();
-        linker.playerData.lastScore = 0;
 
         StartCoroutine(ResetPlayer(time));
-        linker.playerVars.isMoving = false;
-        linker.gameEvents.OnPlayerDeath();
+        linker.playerVars.canMove = false;
+        linker.playerVars.oneShot.Reset();
+        linker.playerVars.sideBoost.Reset();
+        linker.playerVars.currentSelectedAbility = Ability.none;
+        linker.gameEventss.OnChangedAbility(Ability.none);
+        linker.playerVars.isDestroyer = false;
+        linker.gameEventss.OnPlayerDeath();
     }
 
     Coroutine SetIsDestroyerFalseCoroutine;
@@ -277,7 +293,7 @@ public class GameplayManager : MonoBehaviour
         {
             if (linker.playerVars.isDestroyer)
             {
-                mapGenerator.DestroyWallPiece(tilePos, 2);
+                mapGenerator.DestroyWallPiece(tilePos, 1);
             }   
             else
             {
@@ -303,17 +319,17 @@ public class GameplayManager : MonoBehaviour
                     timeSurvived += 5;
                     break;
                 case Collectible.oneShot:
-                    linker.playerVars.currentAbility = Ability.oneShot;
+                    linker.playerVars.currentSelectedAbility = Ability.oneShot;
                     linker.playerVars.oneShot.Add();
-                    linker.gameEvents.OnChangedAbility(Ability.oneShot);
+                    linker.gameEventss.OnChangedAbility(Ability.oneShot);
                     break;
                 case Collectible.sideBoost:
-                    linker.playerVars.currentAbility = Ability.sideBoost;
+                    linker.playerVars.currentSelectedAbility = Ability.sideBoost;
                     linker.playerVars.sideBoost.Add();
-                    linker.gameEvents.OnChangedAbility(Ability.sideBoost);
+                    linker.gameEventss.OnChangedAbility(Ability.sideBoost);
                     break;
             }
-            linker.gameEvents.OnCollected(collectible);
+            linker.gameEventss.OnCollected(collectible);
             mapGenerator.collectiblesTilemap.SetTile(tilePos, null);
 
 
@@ -340,15 +356,20 @@ public class GameplayManager : MonoBehaviour
     {
         if(linker.playerVars.currentPhase == PlayerPhase.aim)
         {
-            switch (linker.playerVars.currentAbility)
+            switch (linker.playerVars.currentSelectedAbility)
             {
                 case Ability.oneShot:
                     linker.playerVars.oneShot.Use();
+                    
+                    linker.gameEventss.OnUsedAbility(Ability.oneShot);
                     break;
                 case Ability.sideBoost:
-                    sideBoostScript.ResetSideBoost();
+                    sideBoostScript.ResetTime();
                     sideBoostScript.SetSideBoost(0.3f, 50, (_aimDelta.x > 0 ? true : false));
                     linker.playerVars.sideBoost.Use();
+                    linker.gameEventss.OnUsedAbility(Ability.sideBoost);
+
+
                     break;
             }
         }
@@ -360,7 +381,7 @@ public class GameplayManager : MonoBehaviour
     void OnActionEnd()
     {
         _grapPhase.StopPull();
-        if (linker.playerVars.currentAbility == Ability.sideBoost)
+        if (linker.playerVars.currentSelectedAbility == Ability.sideBoost)
         {
             linker.playerVars.sideBoost.SetUsed();
         }
@@ -383,8 +404,8 @@ public class GameplayManager : MonoBehaviour
         AbilityAccess abilityAccess = linker.playerVars.GetCurrentAbilityAcccess();
         if (abilityAccess != null && abilityAccess.GetCount() < 1)
         {
-            linker.playerVars.currentAbility = Ability.none;
-            linker.gameEvents.OnChangedAbility(Ability.none);
+            linker.playerVars.currentSelectedAbility = Ability.none;
+            linker.gameEventss.OnChangedAbility(Ability.none);
         }
-    }
+    }*/
 }

@@ -5,13 +5,14 @@ using UnityEngine;
 public class SceneSwitch : MonoBehaviour
 {
     public SceneLoadingChannelSO channel;
+    public bool showLoadingScreen;
     public static bool loaded;
 
     public List<SceneInfoSO> scenes;
 
     public void LoadScenes()
     {
-        channel.Load(scenes, true);
+        channel.Load(scenes, showLoadingScreen);
     }
     public void Quit()
     {

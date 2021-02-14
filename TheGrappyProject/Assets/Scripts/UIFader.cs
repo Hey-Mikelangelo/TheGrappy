@@ -12,22 +12,22 @@ public class UIFader : MonoBehaviour
 
     public GameEventsSO gameEvents;
     public bool isStartGameFader = false;
-
+    public float fadeTime;
     public void OnEnable()
     {
-        gameEvents.onFadeToMenu += Fade;
+        gameEvents.onPlayerDeath += Fade;
     }
     public void OnDisable()
     {
-        gameEvents.onFadeToMenu -= Fade;
+        gameEvents.onPlayerDeath -= Fade;
     }
     public void Unfade(float time)
     {
         StartCoroutine(UnfadeCanvasGroup(time));
     }
-    public void Fade(float time)
+    public void Fade()
     {
-        StartCoroutine(FadeCanvasGroup(time));
+        StartCoroutine(FadeCanvasGroup(fadeTime));
     }
     IEnumerator FadeCanvasGroup(float timeToUnfade)
     {
@@ -49,7 +49,7 @@ public class UIFader : MonoBehaviour
         onFadeCompleted?.Invoke();
         if (isStartGameFader)
         {
-            gameEvents.OnFadedToMenu();
+            //gameEvents.OnFadedToMenu();
         }
     }
     IEnumerator UnfadeCanvasGroup(float timeToUnfade)
@@ -72,7 +72,7 @@ public class UIFader : MonoBehaviour
         onUnfadeCompleted?.Invoke();
         if (isStartGameFader)
         {
-            gameEvents.OnUnfadedToPlay();
+            //gameEvents.OnUnfadedToPlay();
         }
     }
 }

@@ -3,63 +3,125 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Rendering.Universal;
 
 [CreateAssetMenu(fileName = "GameEventsSO", menuName = "Game/GameEvents")]
 public class GameEventsSO : ScriptableObject
 {
     public event UnityAction onPressPlay;
-    public event UnityAction<float> onUnfadeToPlay;
-    public event UnityAction onUnfadedToPlay;
-    public event UnityAction<float> onFadeToMenu;
-    public event UnityAction onFadedToMenu;
-    public event UnityAction onPlayerDeath;
-    public event UnityAction onMapLoaded;
-    public event UnityAction<Ability> onChangedAbility;
-    public event UnityAction onMapGenerated;
-    public event UnityAction onSetIsDestroyerFalse;
+    public event UnityAction onStartMove;
     public event UnityAction<Collectible> onCollected;
-    public void OnPressPlay()
+    public event UnityAction<Collectible> onUseAbility;
+    public event UnityAction<Collectible> onChangedAbility;
+    public event UnityAction<Collision2D> onCollision;
+    public event UnityAction onPlayerDeath;
+    public event UnityAction onFadedToDeathScreen;
+    public event UnityAction onFadedFromDeathScreen;
+    public event UnityAction onEndedTimeForRespawn;
+    public event UnityAction onPressRespawn;
+    public event UnityAction onPressNewPlay;
+    public event UnityAction onNewGameSceneLoaded;
+    public event UnityAction onMapGenerated;
+    public event UnityAction onMapReady;
+    public event UnityAction onStartClearMap;
+    public event UnityAction onMapCleared;
+    public event UnityAction onSaveProgress;
+    public event UnityAction onLoadProgress;
+    public event UnityAction<Vector2Int> onPlayerChangedChunk;
+    public event UnityAction onStartGameTimer;
+    public event UnityAction onEndGameTimer;
+    public event UnityAction onResetGameTimer;
+
+    public void PressPlay()
     {
         onPressPlay?.Invoke();
     }
-    public void OnUnfadedToPlay()
+    public void StartMove()
     {
-        onUnfadedToPlay?.Invoke();
+        onStartMove?.Invoke();
     }
-    public void OnUnfadeToPlay(float time)
+    public void Collected(Collectible col)
     {
-        onUnfadeToPlay?.Invoke(time);
+        onCollected?.Invoke(col);
     }
-    public void OnFadeToMenu(float time)
+    public void UseAbility(Collectible col)
     {
-        onFadeToMenu?.Invoke(time);
+        onUseAbility?.Invoke(col);
     }
-    public void OnFadedToMenu() 
+    public void ChangedAbility(Collectible col)
     {
-        onFadedToMenu?.Invoke();
+        onChangedAbility?.Invoke(col);
     }
-    public void OnPlayerDeath()
+    public void Collision(Collision2D collision)
+    {
+        onCollision?.Invoke(collision);
+    }
+    public void PlayerDeath()
     {
         onPlayerDeath?.Invoke();
     }
-    public void OnMapLoaded()
+    public void FadedToDeathScreen()
     {
-        onMapLoaded?.Invoke();
+        onFadedToDeathScreen?.Invoke();
     }
-    public void OnChangedAbility(Ability ability)
+    public void FadedFromDeathScreen()
     {
-        onChangedAbility?.Invoke(ability);
+        onFadedFromDeathScreen?.Invoke();
     }
-    public void OnMapGenerated()
+    public void EndedTimeForRespawn()
+    {
+        onEndedTimeForRespawn?.Invoke();
+    }
+    public void PressRespawn()
+    {
+        onPressRespawn?.Invoke();
+    }
+    public void PressNewPlay()
+    {
+        onPressNewPlay?.Invoke();
+    }
+    public void NewGameSceneLoaded()
+    {
+        onNewGameSceneLoaded?.Invoke();
+    }
+    public void MapGenerated()
     {
         onMapGenerated?.Invoke();
     }
-    public void OnSetIsDestroyerFalseDelayed()
+    public void MapReady()
     {
-        onSetIsDestroyerFalse?.Invoke();
+        onMapReady?.Invoke();
     }
-    public void OnCollected(Collectible col)
+    public void StartClearMap()
     {
-        onCollected?.Invoke(col);
+        onStartClearMap?.Invoke();
+    }
+    public void MapCleared()
+    {
+        onMapCleared?.Invoke();
+    }
+    public void SaveProgress()
+    {
+        onSaveProgress?.Invoke();
+    }
+    public void LoadProgress()
+    {
+        onLoadProgress?.Invoke();
+    }
+    public void PlayerChangedChunk(Vector2Int chunk)
+    {
+        onPlayerChangedChunk?.Invoke(chunk);
+    }
+    public void StartGameTimer()
+    {
+        onStartGameTimer?.Invoke();
+    }
+    public void EndGameTimer()
+    {
+        onEndGameTimer?.Invoke();
+    }
+    public void ResetGameTimer()
+    {
+        onResetGameTimer?.Invoke();
     }
 }
