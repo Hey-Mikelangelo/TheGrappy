@@ -28,7 +28,7 @@ public class WallGeneratorSO : ScriptableObject
         chunkData.chunkIndex = new Vector2Int(chunkIndexX, chunkIndexY);
         byte wallTileIndex = mapData.GetTileIndex(wallTile);
         int scaledChunkSize = mapData.chunkSize / _wallCellSize;
-        chunkData.size = scaledChunkSize;
+        chunkData.scaledChunkSize = scaledChunkSize;
         int perlinMapSize = mapData.perlinResolution * mapData.chunkSize;
         bool[,] WallsPerlinMap = new bool[scaledChunkSize, scaledChunkSize];
         Vector3Int currentCellIndexLocal;

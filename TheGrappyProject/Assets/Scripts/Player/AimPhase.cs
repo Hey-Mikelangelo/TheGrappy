@@ -42,6 +42,10 @@ public class AimPhase : MonoBehaviour
         aimPoint.GetComponent<SpriteRenderer>().enabled = false;
 
     }
+    public void SetSpeed(float speed)
+    {
+        _speed = speed;
+    }
     void ResetGrap()
     {
         playerVars.hasGrapPoint = false;

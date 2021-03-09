@@ -20,8 +20,6 @@ public class PlayerVarsSO : ScriptableObject
     public MovePhase currentMovePhase;
     public Collectible currentSelectedAbility;
     public Collectible currentActiveAbility;
-    public float speed = 1;
-    public float grapLength = 20;
     public Vector3 grapPos;
     public Vector3Int grapTilePos;
     public Vector2 aimDir;

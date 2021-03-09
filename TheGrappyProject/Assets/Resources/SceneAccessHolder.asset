@@ -16,12 +16,12 @@ MonoBehaviour:
   - name: Game
     path: D:\unityProjects\TheGrappy\TheGrappy\TheGrappyProject\Assets\Scenes\Game.unity
     visible: 1
+  - name: GameMenu
+    path: D:\unityProjects\TheGrappy\TheGrappy\TheGrappyProject\Assets\Scenes\GameMenu.unity
+    visible: 1
   - name: Initialisation
     path: D:\unityProjects\TheGrappy\TheGrappy\TheGrappyProject\Assets\Scenes\Initialisation.unity
     visible: 1
-  - name: GameMenu
-    path: D:\unityProjects\TheGrappy\TheGrappy\TheGrappyProject\Assets\Scenes\Menus\GameMenu.unity
-    visible: 1
-  - name: MainMenu
-    path: D:\unityProjects\TheGrappy\TheGrappy\TheGrappyProject\Assets\Scenes\Menus\MainMenu.unity
+  - name: MLAgents
+    path: D:\unityProjects\TheGrappy\TheGrappy\TheGrappyProject\Assets\Scenes\MLAgents.unity
     visible: 1

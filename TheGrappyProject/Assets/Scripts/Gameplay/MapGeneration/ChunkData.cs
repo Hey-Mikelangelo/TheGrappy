@@ -21,6 +21,6 @@ public class ChunkData
     }
     public static Dictionary<int, TileBase> TilesIndexes;
     public Vector2Int chunkIndex;
-    public int size;
+    public int scaledChunkSize;
     public List<tileInfo> Tiles;
 }

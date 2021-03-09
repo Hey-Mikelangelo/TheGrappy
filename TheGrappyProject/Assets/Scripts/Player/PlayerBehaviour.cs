@@ -8,7 +8,7 @@ public enum MovePhase
     grap
 }
 
-[RequireComponent(typeof(AimPhase), typeof(GrapPhase))]
+[RequireComponent(typeof(AimPhase), typeof(GrapPhase), typeof(GameProgressSaver))]
 public class PlayerBehaviour : MonoBehaviour
 {
     public LinkerSO linker;
@@ -19,6 +19,7 @@ public class PlayerBehaviour : MonoBehaviour
     public Collider2D collectiblesCollider;
 
     [Header("Aim phase variables")]
+    public AnimationCurve scoreToSpeedCurve;
     public float speed = 7;
     public float grapLength = 30;
     public int clearAreaRadius = 15;
@@ -30,11 +31,12 @@ public class PlayerBehaviour : MonoBehaviour
     public float maxRotSpeed = 4;
     public float minOrbitRadius = 1f;
     public float pullSpeed = 5;
-    public float pullDelay = 0.05f;
+    public float pullDelay = 0.00f;
 
     public GameObject player;
     private AimPhase aimPhase;
     private GrapPhase grapPhase;
+    private GameProgressSaver progressSaver;
     private PlayerVarsSO playerVars;
     private GameEventsSO gameEvents;
     private InputProxy inputProxy;
@@ -42,7 +44,6 @@ public class PlayerBehaviour : MonoBehaviour
     private Vector2Int _prevPlayerChunk;
     private Vector3 _startPos;
     private Vector3 _positionOffset;
-    private float timeSurvived;
     private void OnEnable()
     {
         if (player == null)
@@ -52,8 +53,10 @@ public class PlayerBehaviour : MonoBehaviour
         LinkScripts();
         SubsribeEvents();
         ResetForPlay();
+        speed = scoreToSpeedCurve.Evaluate(0);
         SetupAimPhase();
         SetupGrapPhase();
+        progressSaver.LoadProgress();
     }
     private void Start()
     {
@@ -71,9 +74,12 @@ public class PlayerBehaviour : MonoBehaviour
         {
             return;
         }
-        timeSurvived += Time.fixedDeltaTime;
-        linker.playerData.lastScore = Mathf.FloorToInt(timeSurvived * 10);
-
+        playerVars.timeSurvived += Time.fixedDeltaTime;
+        linker.playerData.lastScore = Mathf.FloorToInt(playerVars.timeSurvived * 10);
+        speed = scoreToSpeedCurve.Evaluate(linker.playerData.lastScore);
+        pullSpeed = speed/2;
+        aimPhase.SetSpeed(speed);
+        grapPhase.SetSpeed(speed, pullSpeed);
         Vector2Int currentChunk = GetCurrentChunk();
         if (_prevPlayerChunk != currentChunk)
         {
@@ -119,6 +125,7 @@ public class PlayerBehaviour : MonoBehaviour
     {
         aimPhase = GetComponent<AimPhase>();
         grapPhase = GetComponent<GrapPhase>();
+        progressSaver = GetComponent<GameProgressSaver>();
         gameEvents = linker.gameEvents;
         inputProxy = linker.inputProxy;
         playerVars = linker.playerVars;
@@ -134,7 +141,7 @@ public class PlayerBehaviour : MonoBehaviour
     }
     void ResetForPlay()
     {
-        timeSurvived = 0;
+        playerVars.timeSurvived = 0;
         player.transform.position = Vector3.zero;
         playerVars.SetCurrentMovePhase(MovePhase.aim);
         gameEvents.ResetGameTimer();
@@ -186,6 +193,7 @@ public class PlayerBehaviour : MonoBehaviour
         {
             linker.playerData.highScore = linker.playerData.lastScore;
         }
+        progressSaver.SaveProgress();
         playerVars.canMove = false;
     }
     void OnAim(Vector2 delta)
@@ -297,7 +305,6 @@ public class PlayerBehaviour : MonoBehaviour
             Vector3 bottomLeft = player.transform.position + new Vector3(-clearAreaRadius, -clearAreaRadius + 5, 0);
             Vector3 topRight = player.transform.position + new Vector3(clearAreaRadius, clearAreaRadius + 5, 0);
             mapGenerator.ClearAreaBox(bottomLeft, topRight);
-            Debug.Log("Cleared Area Box");
             playerVars.canMove = true;
             wallCollider.enabled = true;
             collectiblesCollider.enabled = true;

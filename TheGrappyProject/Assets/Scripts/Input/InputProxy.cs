@@ -14,6 +14,7 @@ public class InputProxy : ScriptableObject, InputActions.IBaseGameplayActions
     public event UnityAction actionEndEvent;
     public event UnityAction abilityStartEvent;
     public event UnityAction abilityEndEvent;
+    public event UnityAction<Vector2> moveEvent;
 
     private InputActions _inputActions;
     private void OnEnable()
@@ -60,5 +61,10 @@ public class InputProxy : ScriptableObject, InputActions.IBaseGameplayActions
             abilityStartEvent?.Invoke();
         else if (context.canceled)
             abilityEndEvent?.Invoke();
+    }
+
+    public void OnMove(InputAction.CallbackContext context)
+    {
+        moveEvent?.Invoke(context.ReadValue<Vector2>());
     }
 }

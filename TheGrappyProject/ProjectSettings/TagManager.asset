@@ -17,7 +17,7 @@ TagManager:
   - Collectible
   - CollectibleMagnet
   - Bullet
-  - 
+  - Goal
   - 
   - 
   - 
@@ -44,6 +44,6 @@ TagManager:
   - name: collectibles
     uniqueID: 4133358759
     locked: 0
-  - name: UI
+  - name: other
     uniqueID: 4273878153
     locked: 0

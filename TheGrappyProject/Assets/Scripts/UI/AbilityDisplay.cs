@@ -39,6 +39,10 @@ public class AbilityDisplay : MonoBehaviour
     }
     void OnUsed(Collectible col)
     {
+        if (col == Collectible.coin)
+        {
+            return;
+        }
         AbilityAccess abilityAccess = linker.playerVars.GetAbilityAcccess(ability);
         int count = abilityAccess.GetCount();
         fillImage.fillAmount = (float)count / 6;
@@ -54,6 +58,10 @@ public class AbilityDisplay : MonoBehaviour
    
     void OnCollected(Collectible col)
     {
+        if(col == Collectible.coin)
+        {
+            return;
+        }
         if (col == ability)
         {
             highlightImage.enabled = true;

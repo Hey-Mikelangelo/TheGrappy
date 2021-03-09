@@ -31,6 +31,7 @@ public class GameEventsSO : ScriptableObject
     public event UnityAction onStartGameTimer;
     public event UnityAction onEndGameTimer;
     public event UnityAction onResetGameTimer;
+    public event UnityAction<GameObject> onEnemyDeath;
 
     public void PressPlay()
     {
@@ -123,5 +124,9 @@ public class GameEventsSO : ScriptableObject
     public void ResetGameTimer()
     {
         onResetGameTimer?.Invoke();
+    }
+    public void EnemyDeath(GameObject enemyGO)
+    {
+        onEnemyDeath?.Invoke(enemyGO);
     }
 }

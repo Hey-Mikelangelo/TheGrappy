@@ -46,6 +46,11 @@ public class GrapPhase : MonoBehaviour
         _wallTilemap = playerBehaviour.mapGenerator.wallTilemap;
         playerVars = playerBehaviour.linker.playerVars;
     }
+    public void SetSpeed(float speed, float pullSpeed)
+    {
+        _speed = speed;
+        _pullSpeed = pullSpeed;
+    }
     public void Switch(Vector3 grapPointPos, Vector3Int grapTilePos)
     {
         grapPoint.position = grapPointPos;

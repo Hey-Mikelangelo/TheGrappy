@@ -177,6 +177,17 @@ public class MapGenerator : MonoBehaviour
         linker.gameEvents.MapGenerated();
        
     }
+    public ChunkData GetWallChunkData(Vector2Int chunkIndx)
+    {
+        for (int i = 0; i < ChunksWalls.Count; i++)
+        {
+            if(ChunksWalls[i].chunkIndex == chunkIndx)
+            {
+                return ChunksWalls[i];
+            }
+        }
+        return null;
+    }
     public void ClearMap()
     {
         StartCoroutine(DeleteAllChunks());
@@ -212,7 +223,7 @@ public class MapGenerator : MonoBehaviour
         ChunksCollectiblesRemovedTiles[new Vector2Int(chunkX, chunkY)] = new List<Vector3Int>(collectiblesData.Tiles.Count);
     }
 
-    public void UnloadChunk(ChunkData chunkData, Tilemap tilemap)
+    public static void UnloadChunk(ChunkData chunkData, Tilemap tilemap)
     {
         int count = chunkData.Tiles.Count;
         Vector3Int[] TilesPos = new Vector3Int[count];
@@ -222,7 +233,7 @@ public class MapGenerator : MonoBehaviour
         }
         RemoveTiles(TilesPos, tilemap);
     }
-    void RemoveTiles(Vector3Int[] Tiles, Tilemap tilemap)
+    static void RemoveTiles(Vector3Int[] Tiles, Tilemap tilemap)
     {
         for (int i = 0; i < Tiles.Length; i++)
         {

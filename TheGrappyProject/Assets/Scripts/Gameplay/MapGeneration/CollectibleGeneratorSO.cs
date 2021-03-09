@@ -31,7 +31,7 @@ public class CollectibleGeneratorSO : ScriptableObject
         ChunkData chunkData = new ChunkData(mapData.GetCollectibleTileCountInChunk());
         chunkData.chunkIndex = new Vector2Int(chunkIndexX, chunkIndexY);
         int scaledChunkSize = mapData.chunkSize / _collectibleCellSize;
-        chunkData.size = scaledChunkSize;
+        chunkData.scaledChunkSize = scaledChunkSize;
         int perlinMapSize = mapData.perlinResolution * mapData.chunkSize;
         bool[,] CollectiblesPerlinMap = new bool[scaledChunkSize, scaledChunkSize];
         Vector3Int currentCellIndexLocal;

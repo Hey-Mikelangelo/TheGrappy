@@ -8,7 +8,6 @@ using UnityEngine.SceneManagement;
 public class DeathPopUpScreen : MonoBehaviour
 {
     public SceneTransitionSO pupUpScreen;
-    public GameEventssSO gameEvents;
     public bool _closing;
     public bool _opening;
 

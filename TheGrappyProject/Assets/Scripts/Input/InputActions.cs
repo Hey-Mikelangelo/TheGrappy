@@ -41,6 +41,14 @@ public class @InputActions : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""Move"",
+                    ""type"": ""Button"",
+                    ""id"": ""06dcdfa5-f41d-4520-b007-6ceaf79eca7b"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -197,6 +205,61 @@ public class @InputActions : IInputActionCollection, IDisposable
                     ""action"": ""Ability"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""2D Vector"",
+                    ""id"": ""15b5a928-af00-4f7b-8f41-8813e668c448"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""55a6a52b-be6b-4eb2-88e4-a9d357c2c3c1"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""ccb873e2-bd4f-4369-9815-09b855ff2ca6"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""14a5d6ad-b597-494a-a888-793c2119aa88"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""5f175aee-78b1-44b0-aaf6-4e62e2adbd5a"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 }
             ]
         }
@@ -208,6 +271,7 @@ public class @InputActions : IInputActionCollection, IDisposable
         m_BaseGameplay_Aim = m_BaseGameplay.FindAction("Aim", throwIfNotFound: true);
         m_BaseGameplay_Action = m_BaseGameplay.FindAction("Action", throwIfNotFound: true);
         m_BaseGameplay_Ability = m_BaseGameplay.FindAction("Ability", throwIfNotFound: true);
+        m_BaseGameplay_Move = m_BaseGameplay.FindAction("Move", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -260,6 +324,7 @@ public class @InputActions : IInputActionCollection, IDisposable
     private readonly InputAction m_BaseGameplay_Aim;
     private readonly InputAction m_BaseGameplay_Action;
     private readonly InputAction m_BaseGameplay_Ability;
+    private readonly InputAction m_BaseGameplay_Move;
     public struct BaseGameplayActions
     {
         private @InputActions m_Wrapper;
@@ -267,6 +332,7 @@ public class @InputActions : IInputActionCollection, IDisposable
         public InputAction @Aim => m_Wrapper.m_BaseGameplay_Aim;
         public InputAction @Action => m_Wrapper.m_BaseGameplay_Action;
         public InputAction @Ability => m_Wrapper.m_BaseGameplay_Ability;
+        public InputAction @Move => m_Wrapper.m_BaseGameplay_Move;
         public InputActionMap Get() { return m_Wrapper.m_BaseGameplay; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -285,6 +351,9 @@ public class @InputActions : IInputActionCollection, IDisposable
                 @Ability.started -= m_Wrapper.m_BaseGameplayActionsCallbackInterface.OnAbility;
                 @Ability.performed -= m_Wrapper.m_BaseGameplayActionsCallbackInterface.OnAbility;
                 @Ability.canceled -= m_Wrapper.m_BaseGameplayActionsCallbackInterface.OnAbility;
+                @Move.started -= m_Wrapper.m_BaseGameplayActionsCallbackInterface.OnMove;
+                @Move.performed -= m_Wrapper.m_BaseGameplayActionsCallbackInterface.OnMove;
+                @Move.canceled -= m_Wrapper.m_BaseGameplayActionsCallbackInterface.OnMove;
             }
             m_Wrapper.m_BaseGameplayActionsCallbackInterface = instance;
             if (instance != null)
@@ -298,6 +367,9 @@ public class @InputActions : IInputActionCollection, IDisposable
                 @Ability.started += instance.OnAbility;
                 @Ability.performed += instance.OnAbility;
                 @Ability.canceled += instance.OnAbility;
+                @Move.started += instance.OnMove;
+                @Move.performed += instance.OnMove;
+                @Move.canceled += instance.OnMove;
             }
         }
     }
@@ -307,5 +379,6 @@ public class @InputActions : IInputActionCollection, IDisposable
         void OnAim(InputAction.CallbackContext context);
         void OnAction(InputAction.CallbackContext context);
         void OnAbility(InputAction.CallbackContext context);
+        void OnMove(InputAction.CallbackContext context);
     }
 }
