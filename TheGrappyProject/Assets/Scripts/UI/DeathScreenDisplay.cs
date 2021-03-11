@@ -15,21 +15,17 @@ public class DeathScreenDisplay : MonoBehaviour
         score.text = linker.playerData.lastScore.ToString();
         highScore.text = linker.playerData.highScore.ToString();
 
-        linker.gameEvents.onFadedToDeathScreen += OnFadedToDeathScreen;
+        linker.gameEvents.onPlayerDeath += OnDeath;
     }
     public void OnDisable()
     {
-        linker.gameEvents.onFadedToDeathScreen -= OnFadedToDeathScreen;
-        linker.gameEvents.onNewGameSceneLoaded -= OnNewGameSceneLoaded;
+        linker.gameEvents.onPlayerDeath -= OnDeath;
 
     }
-    void OnFadedToDeathScreen()
+    void OnDeath()
     {
-
-    }
-    void OnNewGameSceneLoaded()
-    {
-
+        score.text = linker.playerData.lastScore.ToString();
+        highScore.text = linker.playerData.highScore.ToString();
     }
    
 }

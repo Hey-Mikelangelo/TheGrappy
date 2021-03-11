@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -216,7 +216,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1013366825}
   - component: {fileID: 1013366827}
-  - component: {fileID: 1013366826}
   - component: {fileID: 1013366828}
   m_Layer: 0
   m_Name: SceneLoader
@@ -239,22 +238,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1013366826
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1013366824}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a9811cecdfcf6b44e8ff2d7e94ae017e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  pupUpScreen: {fileID: 11400000, guid: 9c88235beae4e4f4caea5db867f4e81e, type: 2}
-  gameEvents: {fileID: 0}
-  _closing: 0
-  _opening: 0
 --- !u!114 &1013366827
 MonoBehaviour:
   m_ObjectHideFlags: 0

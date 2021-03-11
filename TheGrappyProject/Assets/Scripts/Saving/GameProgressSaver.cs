@@ -8,19 +8,11 @@ public class GameProgressSaver : MonoBehaviour
     private string coins = "coins";
     private string highScore = "highScore";
     private string playerName = "playerName";
+    private string lastScore = "lastScore";
 
     private void Awake()
     {
-        /*if (!Directory.Exists(SerializationManager.GetSavePath()))
-        {
-            Directory.CreateDirectory(SerializationManager.GetSavePath());
-        }
-        string path = SerializationManager.GetDefaultFilePath(saveFileName);
-
-        if (File.Exists(path))
-        {
-            SerializationManager.Save(saveFileName, (PlayerData)dataManager.playerData);
-        }*/
+       
     }
     private void Start()
     {
@@ -29,22 +21,21 @@ public class GameProgressSaver : MonoBehaviour
 
     private void OnDisable()
     {
-       // EditorApplication.playModeStateChanged -= LoadSave;
     }
    
     public void SaveProgress()
     {
-        //SerializationManager.Save(saveFileName, (PlayerData)dataManager.playerData);
         PlayerPrefs.SetInt(coins, dataManager.playerData.coinsCount);
         PlayerPrefs.SetString(playerName, dataManager.playerData.nickname);
         PlayerPrefs.SetInt(highScore, dataManager.playerData.highScore);
+        PlayerPrefs.SetInt(lastScore, dataManager.playerData.lastScore);
     }
     public void LoadProgress()
     {
         dataManager.playerData.coinsCount = PlayerPrefs.GetInt(coins, 0);
         dataManager.playerData.nickname = PlayerPrefs.GetString(playerName, "player");
         dataManager.playerData.highScore = PlayerPrefs.GetInt(highScore, 0);
-        // dataManager.playerData.SetData((PlayerData)SerializationManager.Load(saveFileName));
+        dataManager.playerData.lastScore = PlayerPrefs.GetInt(lastScore, 0);
 
     }
 }
