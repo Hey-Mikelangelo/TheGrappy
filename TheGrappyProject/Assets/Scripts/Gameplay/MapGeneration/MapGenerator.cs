@@ -14,8 +14,8 @@ public class MapGenerator : MonoBehaviour
 
     private Vector2Int _currentChunk;
     public List<ChunkData> ChunksCollectibles = new List<ChunkData>();
-    public Dictionary<Vector2Int, List<Vector3Int>> ChunksCollectiblesRemovedTiles
-        = new Dictionary<Vector2Int, List<Vector3Int>>();
+    public Dictionary<Vector2Int, Vector3Int[]> ChunksCollectiblesRemovedTiles
+        = new Dictionary<Vector2Int, Vector3Int[]>();
 
     public List<ChunkData> ChunksWalls = new List<ChunkData>();
 
@@ -220,7 +220,7 @@ public class MapGenerator : MonoBehaviour
         ChunkData collectiblesData
             = mapData.collectibleGenerator.CreateCollectiblesChunk(chunkX, chunkY, collectiblesTilemap);
         ChunksCollectibles.Add(collectiblesData);
-        ChunksCollectiblesRemovedTiles[new Vector2Int(chunkX, chunkY)] = new List<Vector3Int>(collectiblesData.Tiles.Count);
+        ChunksCollectiblesRemovedTiles[new Vector2Int(chunkX, chunkY)] = new Vector3Int[collectiblesData.Tiles.Count];
     }
 
     public static void UnloadChunk(ChunkData chunkData, Tilemap tilemap)
@@ -243,7 +243,7 @@ public class MapGenerator : MonoBehaviour
     }
     void RemoveCollectedTiles(Vector2Int chunk)
     {
-        RemoveTiles(ChunksCollectiblesRemovedTiles[chunk].ToArray(), collectiblesTilemap);
+        RemoveTiles(ChunksCollectiblesRemovedTiles[chunk], collectiblesTilemap);
 
     }
     public void LoadChunk(ChunkData chunkData, Tilemap tilemap)

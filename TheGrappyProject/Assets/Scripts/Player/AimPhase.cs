@@ -39,7 +39,7 @@ public class AimPhase : MonoBehaviour
         playerVars = playerBehaviour.linker.playerVars;
         _wallTilemap = playerBehaviour.mapGenerator.wallTilemap;
         playerVars.hasGrapPoint = false;
-        aimPoint.GetComponent<SpriteRenderer>().enabled = false;
+       // aimPoint.GetComponent<SpriteRenderer>().enabled = false;
 
     }
     public void SetSpeed(float speed)
@@ -49,7 +49,7 @@ public class AimPhase : MonoBehaviour
     void ResetGrap()
     {
         playerVars.hasGrapPoint = false;
-        aimPoint.GetComponent<SpriteRenderer>().enabled = false;
+       // aimPoint.GetComponent<SpriteRenderer>().enabled = false;
     }
     //should be called every time when switching to Aim phase
     public void Switch()
@@ -60,10 +60,13 @@ public class AimPhase : MonoBehaviour
             Debug.LogError("AimArrowHolder on AimPhase Script has no attatched SpriteRenderer on child");
         }
         else
-            aimArrowHolder.GetChild(0).GetComponent<SpriteRenderer>().enabled = true;
+        {
+
+        }
+            //aimArrowHolder.GetChild(0).GetComponent<SpriteRenderer>().enabled = true;
 
 
-        laternLight.enabled = true;
+       // laternLight.enabled = true;
 
     }
     public void End()
@@ -72,16 +75,16 @@ public class AimPhase : MonoBehaviour
         {
             Debug.LogError("AimArrowHolder on AimPhase Script has no attatched SpriteRenderer on child");
         }
-        else
-            aimArrowHolder.GetChild(0).GetComponent<SpriteRenderer>().enabled = false;
+        else { }
+            //aimArrowHolder.GetChild(0).GetComponent<SpriteRenderer>().enabled = false;
 
         if (aimPoint != null)
         {
-            aimPoint.GetComponent<SpriteRenderer>().enabled = false;
+            //aimPoint.GetComponent<SpriteRenderer>().enabled = false;
 
         }
 
-        laternLight.enabled = false;
+       // laternLight.enabled = false;
 
     }
     private void OnDrawGizmos()
@@ -137,12 +140,12 @@ public class AimPhase : MonoBehaviour
         if (MapGenerator.CheckForTile(_wallTilemap, _grapTilePos))
         {
             playerVars.hasGrapPoint = true;
-            aimPoint.GetComponent<SpriteRenderer>().enabled = true;
+            //aimPoint.GetComponent<SpriteRenderer>().enabled = true;
         }
         else
         {
             playerVars.hasGrapPoint = false;
-            aimPoint.GetComponent<SpriteRenderer>().enabled = false;
+            //aimPoint.GetComponent<SpriteRenderer>().enabled = false;
         }
         SetAimPoint(_grapPos);
 

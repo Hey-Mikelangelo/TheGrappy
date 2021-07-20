@@ -22,20 +22,12 @@
                     "interactions": ""
                 },
                 {
-                    "name": "Ability",
+                    "name": "ActionHold",
                     "type": "Button",
-                    "id": "42903ceb-c182-4e48-b09c-58639f5bb8d5",
+                    "id": "5fd89d64-cb01-4209-81c8-af31aab0c06f",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": ""
-                },
-                {
-                    "name": "Move",
-                    "type": "Button",
-                    "id": "06dcdfa5-f41d-4520-b007-6ceaf79eca7b",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": ""
+                    "interactions": "Hold"
                 }
             ],
             "bindings": [
@@ -184,69 +176,25 @@
                 },
                 {
                     "name": "",
-                    "id": "a6069f28-6a56-423e-b53a-f451756deecd",
-                    "path": "<Keyboard>/z",
+                    "id": "d10c1698-c49b-42ce-8f16-b3a6cbed6f1a",
+                    "path": "<Gamepad>/leftTrigger",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Ability",
+                    "action": "ActionHold",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
-                    "name": "2D Vector",
-                    "id": "15b5a928-af00-4f7b-8f41-8813e668c448",
-                    "path": "2DVector",
+                    "name": "",
+                    "id": "a6ab8fe0-3a5b-4d6f-854a-a298f0b12e5c",
+                    "path": "<Keyboard>/space",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Move",
-                    "isComposite": true,
+                    "action": "ActionHold",
+                    "isComposite": false,
                     "isPartOfComposite": false
-                },
-                {
-                    "name": "up",
-                    "id": "55a6a52b-be6b-4eb2-88e4-a9d357c2c3c1",
-                    "path": "<Keyboard>/w",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Move",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "down",
-                    "id": "ccb873e2-bd4f-4369-9815-09b855ff2ca6",
-                    "path": "<Keyboard>/s",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Move",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "left",
-                    "id": "14a5d6ad-b597-494a-a888-793c2119aa88",
-                    "path": "<Keyboard>/a",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Move",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "right",
-                    "id": "5f175aee-78b1-44b0-aaf6-4e62e2adbd5a",
-                    "path": "<Keyboard>/d",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Move",
-                    "isComposite": false,
-                    "isPartOfComposite": true
                 }
             ]
         }

@@ -39,7 +39,7 @@ public class PlayerBehaviour : MonoBehaviour
     private GameProgressSaver progressSaver;
     private PlayerVarsSO playerVars;
     private GameEventsSO gameEvents;
-    private InputProxy inputProxy;
+    private InputEventsSO inputProxy;
     private Vector2 _aimDelta;
     private Vector2Int _prevPlayerChunk;
     private Vector3 _startPos;
@@ -89,7 +89,7 @@ public class PlayerBehaviour : MonoBehaviour
         UseAbility(playerVars.currentActiveAbility);
         gameEvents.UseAbility(playerVars.currentActiveAbility);
 
-        switch (playerVars.currentMovePhase)
+       /* switch (playerVars.currentMovePhase)
         {
             case MovePhase.aim:
                 player.transform.position += aimPhase.Run(_aimDelta,
@@ -102,7 +102,7 @@ public class PlayerBehaviour : MonoBehaviour
                 //position changes inside grapPhase
                 grapPhase.Run();
                 break;
-        }
+        }*/
 
     }
     void UseAbility(Collectible collectible)
@@ -132,10 +132,10 @@ public class PlayerBehaviour : MonoBehaviour
     }
     void SubsribeEvents()
     {
-        inputProxy.aimEvent += OnAim;
-        inputProxy.aimEndEvent += OnAimEnd;
-        inputProxy.actionStartEvent += OnActionStart;
-        inputProxy.actionEndEvent += OnActionEnd;
+        inputProxy.onAim += OnAim;
+        inputProxy.onAimEnd += OnAimEnd;
+        inputProxy.onMainAction += OnActionStart;
+        inputProxy.onMainActionEnd += OnActionEnd;
         gameEvents.onCollision += OnCollision;
         gameEvents.onMapGenerated += OnMapGenerated;
     }
@@ -180,10 +180,10 @@ public class PlayerBehaviour : MonoBehaviour
     }
     void UnsubscribeEvents()
     {
-        inputProxy.aimEvent -= OnAim;
-        inputProxy.aimEndEvent -= OnAimEnd;
-        inputProxy.actionStartEvent -= OnActionStart;
-        inputProxy.actionEndEvent -= OnActionEnd;
+        inputProxy.onAim -= OnAim;
+        inputProxy.onAimEnd -= OnAimEnd;
+        inputProxy.onMainAction -= OnActionStart;
+        inputProxy.onMainActionEnd -= OnActionEnd;
         gameEvents.onCollision -= OnCollision;
         gameEvents.onMapGenerated -= OnMapGenerated;
     }
@@ -272,7 +272,8 @@ public class PlayerBehaviour : MonoBehaviour
 
             CollectibleTile tile = mapGenerator.collectiblesTilemap.GetTile(
                 tilePos) as CollectibleTile;
-            mapGenerator.ChunksCollectiblesRemovedTiles[GetCurrentChunk()].Add(tilePos);
+            int newIndex = mapGenerator.ChunksCollectiblesRemovedTiles[GetCurrentChunk()].Length;
+            mapGenerator.ChunksCollectiblesRemovedTiles[GetCurrentChunk()][newIndex] = tilePos;
 
             if (tile == null)
             {
@@ -306,7 +307,7 @@ public class PlayerBehaviour : MonoBehaviour
             Vector3 topRight = player.transform.position + new Vector3(clearAreaRadius, clearAreaRadius + 5, 0);
             mapGenerator.ClearAreaBox(bottomLeft, topRight);
             playerVars.canMove = true;
-            wallCollider.enabled = true;
+            //wallCollider.enabled = true;
             collectiblesCollider.enabled = true;
             gameEvents.MapReady();
             Scene scene = gameObject.scene;

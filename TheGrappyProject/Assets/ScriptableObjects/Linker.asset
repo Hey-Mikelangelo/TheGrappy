@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sceneLoadingChannel: {fileID: 11400000, guid: e11ff3edc45699c4494a83827bdf8854,
     type: 2}
-  inputProxy: {fileID: 11400000, guid: 103cb6ada02b55749b129ae68e1a6ce7, type: 2}
+  inputProxy: {fileID: 11400000, guid: 3a102aa66bc4bfe418c28b0ff14647c0, type: 2}
   gameEvents: {fileID: 11400000, guid: c8267ebac73fee446831403ce8162e4d, type: 2}
   playerData: {fileID: 11400000, guid: 87da988acb9c2214d8650eced707ee99, type: 2}
   playerVars: {fileID: 11400000, guid: 6a6021d7b5f96a14c8d481b6ba16408e, type: 2}

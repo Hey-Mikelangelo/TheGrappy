@@ -79,6 +79,8 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 /[Aa]ssets/[Tt]est/*
+/[Aa]ssets/Plugins/*
+/[Aa]ssets/Library/*
 Assembly-CSharp.csproj
 Assembly-CSharp-Editor.csproj
 TheGrappyProject.sln

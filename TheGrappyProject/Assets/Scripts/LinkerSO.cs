@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class LinkerSO : ScriptableObject {
     public SceneLoadingChannelSO sceneLoadingChannel;
-    public InputProxy inputProxy;
+    public InputEventsSO inputProxy;
     public GameEventsSO gameEvents;
     public PlayerDataSO playerData;
     public PlayerVarsSO playerVars;

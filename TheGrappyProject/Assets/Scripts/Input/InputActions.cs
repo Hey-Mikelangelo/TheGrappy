@@ -35,20 +35,12 @@ public class @InputActions : IInputActionCollection, IDisposable
                     ""interactions"": """"
                 },
                 {
-                    ""name"": ""Ability"",
+                    ""name"": ""ActionHold"",
                     ""type"": ""Button"",
-                    ""id"": ""42903ceb-c182-4e48-b09c-58639f5bb8d5"",
+                    ""id"": ""5fd89d64-cb01-4209-81c8-af31aab0c06f"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
-                    ""interactions"": """"
-                },
-                {
-                    ""name"": ""Move"",
-                    ""type"": ""Button"",
-                    ""id"": ""06dcdfa5-f41d-4520-b007-6ceaf79eca7b"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """"
+                    ""interactions"": ""Hold""
                 }
             ],
             ""bindings"": [
@@ -197,69 +189,25 @@ public class @InputActions : IInputActionCollection, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""a6069f28-6a56-423e-b53a-f451756deecd"",
-                    ""path"": ""<Keyboard>/z"",
+                    ""id"": ""d10c1698-c49b-42ce-8f16-b3a6cbed6f1a"",
+                    ""path"": ""<Gamepad>/leftTrigger"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Ability"",
+                    ""action"": ""ActionHold"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
                 {
-                    ""name"": ""2D Vector"",
-                    ""id"": ""15b5a928-af00-4f7b-8f41-8813e668c448"",
-                    ""path"": ""2DVector"",
+                    ""name"": """",
+                    ""id"": ""a6ab8fe0-3a5b-4d6f-854a-a298f0b12e5c"",
+                    ""path"": ""<Keyboard>/space"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Move"",
-                    ""isComposite"": true,
+                    ""action"": ""ActionHold"",
+                    ""isComposite"": false,
                     ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": ""up"",
-                    ""id"": ""55a6a52b-be6b-4eb2-88e4-a9d357c2c3c1"",
-                    ""path"": ""<Keyboard>/w"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Move"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""down"",
-                    ""id"": ""ccb873e2-bd4f-4369-9815-09b855ff2ca6"",
-                    ""path"": ""<Keyboard>/s"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Move"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""left"",
-                    ""id"": ""14a5d6ad-b597-494a-a888-793c2119aa88"",
-                    ""path"": ""<Keyboard>/a"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Move"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""right"",
-                    ""id"": ""5f175aee-78b1-44b0-aaf6-4e62e2adbd5a"",
-                    ""path"": ""<Keyboard>/d"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Move"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
                 }
             ]
         }
@@ -270,8 +218,7 @@ public class @InputActions : IInputActionCollection, IDisposable
         m_BaseGameplay = asset.FindActionMap("BaseGameplay", throwIfNotFound: true);
         m_BaseGameplay_Aim = m_BaseGameplay.FindAction("Aim", throwIfNotFound: true);
         m_BaseGameplay_Action = m_BaseGameplay.FindAction("Action", throwIfNotFound: true);
-        m_BaseGameplay_Ability = m_BaseGameplay.FindAction("Ability", throwIfNotFound: true);
-        m_BaseGameplay_Move = m_BaseGameplay.FindAction("Move", throwIfNotFound: true);
+        m_BaseGameplay_ActionHold = m_BaseGameplay.FindAction("ActionHold", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -323,16 +270,14 @@ public class @InputActions : IInputActionCollection, IDisposable
     private IBaseGameplayActions m_BaseGameplayActionsCallbackInterface;
     private readonly InputAction m_BaseGameplay_Aim;
     private readonly InputAction m_BaseGameplay_Action;
-    private readonly InputAction m_BaseGameplay_Ability;
-    private readonly InputAction m_BaseGameplay_Move;
+    private readonly InputAction m_BaseGameplay_ActionHold;
     public struct BaseGameplayActions
     {
         private @InputActions m_Wrapper;
         public BaseGameplayActions(@InputActions wrapper) { m_Wrapper = wrapper; }
         public InputAction @Aim => m_Wrapper.m_BaseGameplay_Aim;
         public InputAction @Action => m_Wrapper.m_BaseGameplay_Action;
-        public InputAction @Ability => m_Wrapper.m_BaseGameplay_Ability;
-        public InputAction @Move => m_Wrapper.m_BaseGameplay_Move;
+        public InputAction @ActionHold => m_Wrapper.m_BaseGameplay_ActionHold;
         public InputActionMap Get() { return m_Wrapper.m_BaseGameplay; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -348,12 +293,9 @@ public class @InputActions : IInputActionCollection, IDisposable
                 @Action.started -= m_Wrapper.m_BaseGameplayActionsCallbackInterface.OnAction;
                 @Action.performed -= m_Wrapper.m_BaseGameplayActionsCallbackInterface.OnAction;
                 @Action.canceled -= m_Wrapper.m_BaseGameplayActionsCallbackInterface.OnAction;
-                @Ability.started -= m_Wrapper.m_BaseGameplayActionsCallbackInterface.OnAbility;
-                @Ability.performed -= m_Wrapper.m_BaseGameplayActionsCallbackInterface.OnAbility;
-                @Ability.canceled -= m_Wrapper.m_BaseGameplayActionsCallbackInterface.OnAbility;
-                @Move.started -= m_Wrapper.m_BaseGameplayActionsCallbackInterface.OnMove;
-                @Move.performed -= m_Wrapper.m_BaseGameplayActionsCallbackInterface.OnMove;
-                @Move.canceled -= m_Wrapper.m_BaseGameplayActionsCallbackInterface.OnMove;
+                @ActionHold.started -= m_Wrapper.m_BaseGameplayActionsCallbackInterface.OnActionHold;
+                @ActionHold.performed -= m_Wrapper.m_BaseGameplayActionsCallbackInterface.OnActionHold;
+                @ActionHold.canceled -= m_Wrapper.m_BaseGameplayActionsCallbackInterface.OnActionHold;
             }
             m_Wrapper.m_BaseGameplayActionsCallbackInterface = instance;
             if (instance != null)
@@ -364,12 +306,9 @@ public class @InputActions : IInputActionCollection, IDisposable
                 @Action.started += instance.OnAction;
                 @Action.performed += instance.OnAction;
                 @Action.canceled += instance.OnAction;
-                @Ability.started += instance.OnAbility;
-                @Ability.performed += instance.OnAbility;
-                @Ability.canceled += instance.OnAbility;
-                @Move.started += instance.OnMove;
-                @Move.performed += instance.OnMove;
-                @Move.canceled += instance.OnMove;
+                @ActionHold.started += instance.OnActionHold;
+                @ActionHold.performed += instance.OnActionHold;
+                @ActionHold.canceled += instance.OnActionHold;
             }
         }
     }
@@ -378,7 +317,6 @@ public class @InputActions : IInputActionCollection, IDisposable
     {
         void OnAim(InputAction.CallbackContext context);
         void OnAction(InputAction.CallbackContext context);
-        void OnAbility(InputAction.CallbackContext context);
-        void OnMove(InputAction.CallbackContext context);
+        void OnActionHold(InputAction.CallbackContext context);
     }
 }

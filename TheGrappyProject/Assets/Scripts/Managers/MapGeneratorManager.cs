@@ -4,17 +4,12 @@ using UnityEngine;
 
 public class MapGeneratorManager : MonoBehaviour
 {
-    public struct ChunkData
-    {
-        public List<GameObject> grapPoints;
-    }
     public SceneInfoHolderSO sceneInfo;
     public bool generateOnChange;
     [SerializeField] private Renderer perlinRenderer;
     [SerializeField] private Renderer cellRenderer;
     [Header("Grid")]
     public int chunkSize;
-    public List<ChunkData> Chunks;
     [Header("Grap Points")]
     public GameObject grapPoint;
     public Transform grapPointsHolder;
