@@ -1,7 +1,5 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -13,37 +11,28 @@ public class SceneTransitionSO : ScriptableObject
     public static bool isTransition { get; private set; }
 
     public GameObject transitionCanvas;
-    public UnityAction onStartTransitionCompleted;
-    public UnityAction onEndTransitionCompleted;
+    public System.Action onStartTransitionCompleted;
+    public System.Action onEndTransitionCompleted;
     public bool hasLoadingBar = false;
     public bool onlyDisable = false;
 
-    private GameObject _transitionCanvasInstance;
-    private Canvas _mainCanvas;
-    private Slider _loadingProgressSlider;
-    private Animator _animator;
-    private RuntimeAnimatorController _animatorController;
-    private MonoBehaviour _coroutineCaller;
-    private bool _hasAnimator = false;
-    private Scene _persistentScene;
+    private GameObject transitionCanvasInstance;
+    private Canvas mainCanvas;
+    private Slider loadingProgressSlider;
+    private Animator animator;
+    private RuntimeAnimatorController animatorController;
+    private MonoBehaviour coroutineCaller;
+    private bool hasAnimator = false;
+    private Scene persistentScene;
     private Coroutine StartCoroutine, EndCoroutine;
-    private static bool _isInstantiated = false;
     private bool started;
-    static void SetAsCurrentTransition(SceneTransitionSO transition)
-    {
-        currentTransition = transition;
-        isTransition = true;
-    }
-    static void OnTransitionEnded()
-    {
-        isTransition = false;
-    }
+
     /// <summary>
     /// In most cases pass "this" as "coroutineCaller". 
     /// Instantiates transitionCanvas in persistent scene, waits for end of start-transition 
-    /// animation and fires the "onStartTransitionCompleted" event (UnityAction).
+    /// animation and fires the "onStartTransitionCompleted" event (System.Action).
     /// Call "EndTransition" to play end-transition animation. Fires "onEndTransitionCompleted" 
-    /// event (UnityAction) on end-transition animation completion. Returns instance of transition canvas
+    /// event (System.Action) on end-transition animation completion. Returns instance of transition canvas
     /// </summary>
     /// <param name="coroutineCaller">in most cases just pass "this"</param>
     public GameObject StartTransition(MonoBehaviour coroutineCaller, Scene persistentScene)
@@ -54,54 +43,45 @@ public class SceneTransitionSO : ScriptableObject
         if (EndCoroutine != null)
             coroutineCaller.StopCoroutine(EndCoroutine);
 
-        _persistentScene = persistentScene;
+        this.persistentScene = persistentScene;
         SceneTransitionSO.SetAsCurrentTransition(this);
         Scene oldActiveScene = SceneManager.GetActiveScene();
-        SceneManager.SetActiveScene(_persistentScene);
-        if (_transitionCanvasInstance == null)
+        SceneManager.SetActiveScene(this.persistentScene);
+        if (transitionCanvasInstance == null)
         {
-            _transitionCanvasInstance = Instantiate(transitionCanvas);
+            transitionCanvasInstance = Instantiate(transitionCanvas);
         }
         else
         {
-            _mainCanvas.enabled = true;
+            mainCanvas.enabled = true;
         }
-        _isInstantiated = true;
         if (SceneManager.GetSceneByBuildIndex(oldActiveScene.buildIndex).isLoaded)
         {
             SceneManager.SetActiveScene(oldActiveScene);
         }
-        else
-        {
-
-        }
-        _coroutineCaller = coroutineCaller;
+        this.coroutineCaller = coroutineCaller;
         CheckComponents();
-        if (!_hasAnimator)
+        if (!hasAnimator)
         {
             onStartTransitionCompleted?.Invoke();
-            return _transitionCanvasInstance;
+            return transitionCanvasInstance;
         }
         if (hasLoadingBar)
         {
-            _loadingProgressSlider.value = 0;
+            loadingProgressSlider.value = 0;
         }
-        _animatorController = _animator.runtimeAnimatorController;
-        float transitionTime = _animatorController.animationClips[0].length;
-        _animator.ResetTrigger("end");
-        _animator.SetTrigger("start");
-        StartCoroutine = _coroutineCaller.StartCoroutine(StartTransitionCompletedCaller(transitionTime));
+        animatorController = animator.runtimeAnimatorController;
+        float transitionTime = animatorController.animationClips[0].length;
+        animator.ResetTrigger("end");
+        animator.SetTrigger("start");
+        StartCoroutine = this.coroutineCaller.StartCoroutine(StartTransitionCompletedCaller(transitionTime));
         started = true;
-        return _transitionCanvasInstance;
+        return transitionCanvasInstance;
     }
-    IEnumerator StartTransitionCompletedCaller(float transitionTime)
-    {
-        yield return new WaitForSeconds(transitionTime);
-        onStartTransitionCompleted?.Invoke();
-    }
+
     /// <summary>
     /// Plays end-transition animation. Fires "onEndTransitionCompleted" 
-    /// event (UnityAction) on end-transition animation completion.
+    /// event (System.Action) on end-transition animation completion.
     /// </summary>
     public void EndTransition()
     {
@@ -111,63 +91,80 @@ public class SceneTransitionSO : ScriptableObject
         }
         started = false;
         if (StartCoroutine != null)
-            _coroutineCaller.StopCoroutine(StartCoroutine);
+            coroutineCaller.StopCoroutine(StartCoroutine);
         if (EndCoroutine != null)
-            _coroutineCaller.StopCoroutine(EndCoroutine);
+            coroutineCaller.StopCoroutine(EndCoroutine);
 
-        float transitionTime = _animatorController.animationClips[1].length;
-        _animator.ResetTrigger("start");
-        _animator.SetTrigger("end");
-        EndCoroutine = _coroutineCaller.StartCoroutine(EndTransitionCompletedCaller(transitionTime));
+        float transitionTime = animatorController.animationClips[1].length;
+        animator.ResetTrigger("start");
+        animator.SetTrigger("end");
+        EndCoroutine = coroutineCaller.StartCoroutine(EndTransitionCompletedCaller(transitionTime));
     }
-    IEnumerator EndTransitionCompletedCaller(float transitionTime)
+
+    public void SetProgressValue(float value)
+    {
+        if (hasLoadingBar)
+        {
+            loadingProgressSlider.value = value;
+        }
+    }
+
+    private static void SetAsCurrentTransition(SceneTransitionSO transition)
+    {
+        currentTransition = transition;
+        isTransition = true;
+    }
+    private static void OnTransitionEnded()
+    {
+        isTransition = false;
+    }
+    private IEnumerator StartTransitionCompletedCaller(float transitionTime)
+    {
+        yield return new WaitForSeconds(transitionTime);
+        onStartTransitionCompleted?.Invoke();
+    }
+
+    private IEnumerator EndTransitionCompletedCaller(float transitionTime)
     {
         yield return new WaitForSeconds(transitionTime);
 
         SceneTransitionSO.OnTransitionEnded();
         if (onlyDisable)
         {
-            _mainCanvas.enabled = false;
+            mainCanvas.enabled = false;
         }
         else
-        {            
-            Destroy(_transitionCanvasInstance);
-            _isInstantiated = false;
-            _transitionCanvasInstance = null;
+        {
+            Destroy(transitionCanvasInstance);
+            transitionCanvasInstance = null;
         }
 
         onEndTransitionCompleted?.Invoke();
     }
-    public void SetProgressValue(float value)
-    {
-        if (hasLoadingBar)
-        {
-            _loadingProgressSlider.value = value;
-        }
-    }
-    void CheckComponents()
+    
+    private void CheckComponents()
     {
         GetAnimator();
         GetSlider();
         GetCanvas();
     }
-    void GetAnimator()
+    private void GetAnimator()
     {
-        _animator = _transitionCanvasInstance.GetComponentInChildren<Animator>();
-        if (_animator != null)
+        animator = transitionCanvasInstance.GetComponentInChildren<Animator>();
+        if (animator != null)
         {
-            _hasAnimator = true;
+            hasAnimator = true;
         }
         else
         {
-            Debug.LogError(_transitionCanvasInstance + " does not have an Animator component");
-            _hasAnimator = false;
+            Debug.LogError(transitionCanvasInstance + " does not have an Animator component");
+            hasAnimator = false;
         }
     }
-    void GetSlider()
+    private void GetSlider()
     {
-        _loadingProgressSlider = _transitionCanvasInstance.GetComponentInChildren<Slider>();
-        if (_loadingProgressSlider != null)
+        loadingProgressSlider = transitionCanvasInstance.GetComponentInChildren<Slider>();
+        if (loadingProgressSlider != null)
         {
             hasLoadingBar = true;
         }
@@ -176,15 +173,12 @@ public class SceneTransitionSO : ScriptableObject
             hasLoadingBar = false;
         }
     }
-    void GetCanvas()
+    private void GetCanvas()
     {
-        _mainCanvas = _transitionCanvasInstance.GetComponent<Canvas>();
-        if (_mainCanvas == null)
+        mainCanvas = transitionCanvasInstance.GetComponent<Canvas>();
+        if (mainCanvas == null)
         {
-            Debug.LogWarning("No canvas in top object " + _transitionCanvasInstance);
+            Debug.LogWarning("No canvas in top object " + transitionCanvasInstance);
         }
-    }
-    private void OnEnable()
-    {
     }
 }

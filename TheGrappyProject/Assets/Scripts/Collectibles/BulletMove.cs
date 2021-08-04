@@ -30,7 +30,7 @@ public class BulletMove : MonoBehaviour
             StartCoroutine(DestroyWall(collectiblesTilemap, tilePos));
         }
     }
-    IEnumerator DestroyWall(Tilemap tilemap, Vector3Int tilePos)
+    private IEnumerator DestroyWall(Tilemap tilemap, Vector3Int tilePos)
     {
         List<Vector3Int> TilePositions = new List<Vector3Int>(10);
 

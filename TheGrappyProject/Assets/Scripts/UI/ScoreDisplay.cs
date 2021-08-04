@@ -1,25 +1,26 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
+using Zenject;
 
 public class ScoreDisplay : MonoBehaviour
 {
     public TextMeshProUGUI scoreText;
-    public LinkerSO linker;
+    [Inject] GameEventsSO gameEvents;
+    [Inject] GameProgressManager progressManager;
+
     private void OnEnable()
     {
-        linker.gameEvents.onPlayerDeath += UpdateScore;
+        gameEvents.onPlayerDeath += UpdateScore;
         UpdateScore();
     }
     private void OnDisable()
     {
-        linker.gameEvents.onPlayerDeath -= UpdateScore;
+        gameEvents.onPlayerDeath -= UpdateScore;
 
     }
     void UpdateScore()
     {
-        scoreText.text = linker.playerData.lastScore.ToString();
+        scoreText.text = progressManager.CurrentGameData.Score.ToString();
 
     }
 }

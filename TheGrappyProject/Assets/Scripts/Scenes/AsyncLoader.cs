@@ -8,10 +8,10 @@ public static class AsyncLoader
     public static Dictionary<AsyncOperation, int> AsyncOpToSceneBuildIndexDict
         = new Dictionary<AsyncOperation, int>();
 
-    public static UnityAction onNewSceneInitCompleted;
+    public static System.Action onNewSceneInitCompleted;
 
-    public static UnityAction<int> onSceneLoaded;
-    public static UnityAction<int> onSceneUnloaded;
+    public static System.Action<int> onSceneLoaded;
+    public static System.Action<int> onSceneUnloaded;
     public static List<AsyncOperation> LoadScenesAsyncOperations = new List<AsyncOperation>();
     public static List<AsyncOperation> UnloadScenesAsyncOperations = new List<AsyncOperation>();
     public static List<AsyncOperation> OtherAsyncOperations = new List<AsyncOperation>();

@@ -13,8 +13,5 @@ public class CollectibleItem : MonoBehaviour
             Destroy(gameObject);
         }
     }
-    private void Start()
-    {
-        //Destroy(GetComponent<Rigidbody2D>());
-    }
+  
 }

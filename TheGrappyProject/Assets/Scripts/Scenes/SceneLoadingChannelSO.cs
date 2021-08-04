@@ -1,43 +1,43 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
 [CreateAssetMenu(fileName = "SceneLoadingChannelSO", menuName = "Scene Data/SceneLoadingChannel")]
 public class SceneLoadingChannelSO : ScriptableObject
 {
     public SceneInfoSO InitScene;
-    public UnityAction<List<SceneInfoSO>, bool> onLoadScenes;
-    public UnityAction<int> onSceneInted;
-    public UnityAction onQuit;
-    public UnityAction onScenesAllOk;
-    public UnityAction<SceneTransitionSO> onSetSceneTransition;
+    public System.Action<List<SceneInfoSO>, bool> onLoadScenes;
+    public System.Action<int> onSceneInted;
+    public System.Action onQuit;
+    public System.Action onScenesAllOk;
+    public System.Action<SceneTransitionSO> onSetSceneTransition;
     private static bool _loadedInitScene;
+
     public void Load(List<SceneInfoSO> Scenes, bool showLoadingScreen)
     {
         onLoadScenes?.Invoke(Scenes, showLoadingScreen);
     }
+
     public void Quit()
     {
         onQuit?.Invoke();
     }
+
     public void SetSceneInited(int index)
     {
         onSceneInted?.Invoke(index);
     }
+
     public void SetSceneTransition(SceneTransitionSO transitionSO)
     {
         onSetSceneTransition?.Invoke(transitionSO);
     }
-    private void Awake()
-    {
-      
-    }
+
     public void SetInitSceneLoaded()
     {
         _loadedInitScene = true;
     }
+
     public void LoadInitScene()
     {
         if(!_loadedInitScene){

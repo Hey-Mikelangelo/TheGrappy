@@ -1,20 +1,20 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
+using Zenject;
 
 public class AbilityDisplay : MonoBehaviour
 {
     public Collectible ability;
     public Image fillImage;
     public Image highlightImage;
-    public LinkerSO linker;
+
+    [Inject] private GameEventsSO gameEvents;
 
     private void OnEnable()
     {
-        linker.gameEvents.onCollected += OnCollected;
-        linker.gameEvents.onUseAbility += OnUsed;
-        linker.gameEvents.onPlayerDeath += ResetStats;
+        gameEvents.onCollected += OnCollected;
+        gameEvents.onUseAbility += OnUsed;
+        gameEvents.onPlayerDeath += ResetStats;
         if(fillImage == null)
         {
             fillImage = GetComponent<Image>();
@@ -26,20 +26,18 @@ public class AbilityDisplay : MonoBehaviour
     }
     private void OnDisable()
     {
-        linker.gameEvents.onCollected -= OnCollected;
-        linker.gameEvents.onUseAbility -= OnUsed;
-        linker.gameEvents.onPlayerDeath -= ResetStats;
-
-
+        gameEvents.onCollected -= OnCollected;
+        gameEvents.onUseAbility -= OnUsed;
+        gameEvents.onPlayerDeath -= ResetStats;
     }
     private void ResetStats()
     {
         fillImage.fillAmount = 0;
         highlightImage.enabled = false;
     }
-    void OnUsed(Collectible col)
+    private void OnUsed(Collectible col)
     {
-        if (col == Collectible.coin)
+        /*if (col == Collectible.coin)
         {
             return;
         }
@@ -53,12 +51,12 @@ public class AbilityDisplay : MonoBehaviour
         else
         {
             highlightImage.enabled = true;
-        }
+        }*/
     }
    
     void OnCollected(Collectible col)
     {
-        if(col == Collectible.coin)
+       /* if(col == Collectible.coin)
         {
             return;
         }
@@ -73,7 +71,7 @@ public class AbilityDisplay : MonoBehaviour
         {
             highlightImage.enabled = false;
 
-        }
+        }*/
     }
 
 }

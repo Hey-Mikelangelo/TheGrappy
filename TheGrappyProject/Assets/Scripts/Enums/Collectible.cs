@@ -1,7 +1,7 @@
 public enum Collectible
 {
-	coin,
-	sideBoost,
-	oneShot,
-	none
+	none = 0,
+	coin = 1,
+	sideBoost = 2,
+	oneShot = 3
 }

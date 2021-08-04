@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using Zenject;
 
 public class StatsDisplay : MonoBehaviour
 {
-    public LinkerSO linker;
+    [Inject] private GameEventsSO gameEvents;
+    [Inject] private GameProgressManager progressManager;
     public TextMeshProUGUI coinsText;
     public TextMeshProUGUI scoreText;
     public Color collectedScoreColor;
@@ -13,17 +15,17 @@ public class StatsDisplay : MonoBehaviour
     private Coroutine _shineScoreCoroutine;
     private void OnEnable()
     {
-        linker.gameEvents.onCollected += OnCollected;
+        gameEvents.onCollected += OnCollected;
         _initScoreColor = scoreText.color;
     }
     private void OnDisable()
     {
-        linker.gameEvents.onCollected -= OnCollected;
+        gameEvents.onCollected -= OnCollected;
 
     }
     void Update()
     {
-        scoreText.text = linker.playerData.lastScore.ToString();
+        scoreText.text = progressManager.CurrentGameData.Score.ToString();
     }
     void OnCollected(Collectible col)
     {

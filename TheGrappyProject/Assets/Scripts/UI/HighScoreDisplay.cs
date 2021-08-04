@@ -2,24 +2,28 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using Zenject;
 
 public class HighScoreDisplay : MonoBehaviour
 {
     public TextMeshProUGUI highScoreText;
-    public LinkerSO linker;
+    [Inject] private GameProgressManager progressManager;
+    [Inject] private GameEventsSO gameEvents;
+
     private void OnEnable()
     {
-        linker.gameEvents.onPlayerDeath += UpdateHighScore;
+        gameEvents.onPlayerDeath += UpdateHighScore;
         UpdateHighScore();
     }
     private void OnDisable()
     {
-        linker.gameEvents.onPlayerDeath -= UpdateHighScore;
+        gameEvents.onPlayerDeath -= UpdateHighScore;
 
     }
+
     void UpdateHighScore()
     {
-        highScoreText.text = linker.playerData.highScore.ToString();
+        highScoreText.text = progressManager.PersistentGameData.HighScore.ToString();
 
     }
 }

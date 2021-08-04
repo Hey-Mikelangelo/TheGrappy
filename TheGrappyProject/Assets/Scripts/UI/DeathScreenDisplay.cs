@@ -1,31 +1,32 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
+using Zenject;
 
 public class DeathScreenDisplay : MonoBehaviour
 {
-    public LinkerSO linker;
+    [Inject] private GameProgressManager progressManager;
+    [Inject] private GameEventsSO gameEvents;
+
     public TextMeshProUGUI score;
     public TextMeshProUGUI highScore;
 
     public void OnEnable()
     {
-        score.text = linker.playerData.lastScore.ToString();
-        highScore.text = linker.playerData.highScore.ToString();
-
-        linker.gameEvents.onPlayerDeath += OnDeath;
+        UpdateScoreAndHighscore();
+        gameEvents.onPlayerDeath += OnDeath;
     }
     public void OnDisable()
     {
-        linker.gameEvents.onPlayerDeath -= OnDeath;
+        gameEvents.onPlayerDeath -= OnDeath;
 
     }
-    void OnDeath()
+    private void OnDeath()
     {
-        score.text = linker.playerData.lastScore.ToString();
-        highScore.text = linker.playerData.highScore.ToString();
+        UpdateScoreAndHighscore();
     }
-   
+    private void UpdateScoreAndHighscore()
+    {
+        score.text = progressManager.CurrentGameData.Score.ToString();
+        highScore.text = progressManager.PersistentGameData.HighScore.ToString();
+    }
 }

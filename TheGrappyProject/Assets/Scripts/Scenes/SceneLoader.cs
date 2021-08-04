@@ -1,16 +1,15 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
 public static class SceneLoader
 {
-    public static UnityAction onScenesLoaded;
-    public static UnityAction<int> onSceneLoaded;
-    public static UnityAction<int> onSceneUnloaded;
-    private static List<int> PersistentScenesIndexes = new List<int>();
+    public static System.Action OnScenesLoaded;
+    public static System.Action<int> OnSceneLoaded;
+    public static System.Action<int> OnSceneUnloaded;
+
+    private static List<int> persistentScenesIndexes = new List<int>();
     private static List<int> ScenesToUnloadIndexes = new List<int>();
     private static List<int> ScenesToLoadIndexes = new List<int>();
 
@@ -18,13 +17,13 @@ public static class SceneLoader
     private static int _newActiveSceneIndex;
     private static void OnEnable()
     {
-        AsyncLoader.onSceneLoaded += OnSceneLoaded;
-        AsyncLoader.onSceneUnloaded += OnSceneUnloaded;
+        AsyncLoader.onSceneLoaded += SceneLoaded;
+        AsyncLoader.onSceneUnloaded += SceneUnloaded;
     }
     private static void OnDisable()
     {
-        AsyncLoader.onSceneLoaded -= OnSceneLoaded;
-        AsyncLoader.onSceneUnloaded -= OnSceneUnloaded;
+        AsyncLoader.onSceneLoaded -= SceneLoaded;
+        AsyncLoader.onSceneUnloaded -= SceneUnloaded;
     }
     /// <summary>
     /// Unloads all active scenes exluding persistent scenes,
@@ -35,14 +34,14 @@ public static class SceneLoader
     {
         if(Scenes.Count() == 0)
         {
-            onScenesLoaded?.Invoke();
+            OnScenesLoaded?.Invoke();
             return;
         }
-        onSceneLoaded = AsyncLoader.onSceneLoaded;
-        onSceneUnloaded = AsyncLoader.onSceneUnloaded;
+        OnSceneLoaded = AsyncLoader.onSceneLoaded;
+        OnSceneUnloaded = AsyncLoader.onSceneUnloaded;
 
-        AsyncLoader.onSceneLoaded += OnSceneLoaded;
-        AsyncLoader.onSceneUnloaded += OnSceneUnloaded;
+        AsyncLoader.onSceneLoaded += SceneLoaded;
+        AsyncLoader.onSceneUnloaded += SceneUnloaded;
 
         _newActiveSceneIndex = Scenes.ElementAt(0).buildIndex;
         ScenesToLoadIndexes = GetScenesToLoadIndexes(Scenes);
@@ -59,17 +58,17 @@ public static class SceneLoader
         progress /= 2;
         return progress;
     }
-    private static void OnSceneLoaded(int buildIndex)
+    private static void SceneLoaded(int buildIndex)
     {
         if (AsyncLoader.ScenesLeftToLoad <= 0)
         {
             SceneManager.SetActiveScene(SceneManager.GetSceneByBuildIndex(_newActiveSceneIndex));
-            onScenesLoaded?.Invoke();
-            AsyncLoader.onSceneLoaded -= OnSceneLoaded;
-            AsyncLoader.onSceneUnloaded -= OnSceneUnloaded;
+            OnScenesLoaded?.Invoke();
+            AsyncLoader.onSceneLoaded -= SceneLoaded;
+            AsyncLoader.onSceneUnloaded -= SceneUnloaded;
         }
     }
-    private static void OnSceneUnloaded(int buildIndex)
+    private static void SceneUnloaded(int buildIndex)
     {
         if (AsyncLoader.ScenesLeftToUnload <= 0)
         {
@@ -78,24 +77,24 @@ public static class SceneLoader
     }
     public static void AddPersistentScene(SceneInfoSO sceneInfo)
     {
-        if (!PersistentScenesIndexes.Contains(sceneInfo.buildIndex))
+        if (!persistentScenesIndexes.Contains(sceneInfo.buildIndex))
         {
-            PersistentScenesIndexes.Add(sceneInfo.buildIndex);
+            persistentScenesIndexes.Add(sceneInfo.buildIndex);
         }
     }
     public static void RemovePersistentScene(SceneInfoSO sceneInfo)
     {
-        if (PersistentScenesIndexes.Contains(sceneInfo.buildIndex))
+        if (persistentScenesIndexes.Contains(sceneInfo.buildIndex))
         {
-            PersistentScenesIndexes.Remove(sceneInfo.buildIndex);
+            persistentScenesIndexes.Remove(sceneInfo.buildIndex);
         }
     }
     public static void SetPersistentScenes(IEnumerable<SceneInfoSO> SceneInfos)
     {
-        PersistentScenesIndexes.Clear();
+        persistentScenesIndexes.Clear();
         foreach (var sceneInfo in SceneInfos)
         {
-            PersistentScenesIndexes.Add(sceneInfo.buildIndex);
+            persistentScenesIndexes.Add(sceneInfo.buildIndex);
         }
     }
     private static List<int> GetScenesToUnloadIndexes()
@@ -106,7 +105,7 @@ public static class SceneLoader
         for (int i = 0; i < sceneCount; i++)
         {
             index = SceneManager.GetSceneAt(i).buildIndex;
-            if (!PersistentScenesIndexes.Contains(index))
+            if (!persistentScenesIndexes.Contains(index))
             {
                 Scenes.Add(index);
 
